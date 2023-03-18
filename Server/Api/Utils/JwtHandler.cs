@@ -2,12 +2,13 @@ using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Api.Interfaces;
 using CoreLayer.Entities;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Api.Utils
 {
-    public class JwtHandler
+    public class JwtHandler : IJwtHandler
     {
         private readonly IConfiguration _configuration;
         public JwtHandler(IConfiguration configuration)

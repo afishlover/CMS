@@ -1,5 +1,8 @@
 using System.Net;
 using System.Text;
+using Api.Interfaces;
+using Api.Services;
+using Api.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
@@ -11,6 +14,13 @@ builder.Services.AddCors();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddControllers();
+
+//ngrok
+if(builder.Environment.IsDevelopment())
+    builder.Services.AddHostedService<TunnelService>();
+
+//utils
+builder.Services.AddScoped<IJwtHandler, JwtHandler>();
 
 //authentication scheme
 builder.Services

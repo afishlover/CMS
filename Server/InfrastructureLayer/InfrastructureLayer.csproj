@@ -4,6 +4,12 @@
     <ProjectReference Include="..\ApplicationLayer\ApplicationLayer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.123" />
+    <PackageReference Include="SqlKata" Version="3.0.0-beta" />
+    <PackageReference Include="SqlKata.Execution" Version="3.0.0-beta" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
