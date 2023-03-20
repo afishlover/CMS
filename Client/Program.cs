@@ -1,7 +1,12 @@
+using Client.Utils;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+//httpclient
+builder.Services.AddCMSClient();
 
 var app = builder.Build();
 
