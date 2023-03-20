@@ -82,7 +82,8 @@ builder.Services
         };
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options => {
+});
 
 var app = builder.Build();
 
