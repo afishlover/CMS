@@ -1,9 +1,17 @@
 using ApplicationLayer.IRepositories;
 using CoreLayer.Entities;
+using BC = BCrypt.Net.BCrypt;
+using SqlKata.Execution;
 
 namespace InfrastructureLayer.Repositories {
     public class AccountRepository : IAccountRepository
     {
+        private readonly QueryFactory _queryFactory;
+        public AccountRepository(QueryFactory queryFactory)
+        {
+            _queryFactory = queryFactory;
+        }
+
         public Task<int> AddAsync(Account entity)
         {
             throw new NotImplementedException();
@@ -14,9 +22,14 @@ namespace InfrastructureLayer.Repositories {
             throw new NotImplementedException();
         }
 
-        public Account? GetAccountByEmailAndPassword(string email, string password)
+        public async Task<Account?> GetAccountByEmailAndPasswordAsync(string email, string password)
         {
-            throw new NotImplementedException();
+            var account = await _queryFactory.Query("Accounts").Where("Email", "=", email).FirstOrDefaultAsync<Account>();
+            if(account != null) {
+                bool flag = BC.Verify(password, account.Password);
+                return flag? account : null;
+            }
+            return null;
         }
 
         public Task<IReadOnlyList<Account>> GetAllAsync()

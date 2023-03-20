@@ -1,5 +1,6 @@
 using Api.Interfaces;
 using Api.Models.DTOs;
+using ApplicationLayer;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers {
@@ -8,18 +9,20 @@ namespace Api.Controllers {
     [Route("[controller]")]
     public class TokenController : ControllerBase {
         private readonly IJwtHandler _jwtHandler;
-        public TokenController(IJwtHandler jwtHandler)
+        private readonly IUnitOfWork _unitOfWork;
+        public TokenController(IJwtHandler jwtHandler, IUnitOfWork unitOfWork)
         {
             _jwtHandler = jwtHandler;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpPost("[action]")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult Post(AccountDTO accountDTO) {
+        public async Task<IActionResult> Post(AccountDTO accountDTO) {
             if(ModelState.IsValid) {
-                dynamic account = 0;
+                var account = await _unitOfWork._accountRepository.GetAccountByEmailAndPasswordAsync(accountDTO.Email, accountDTO.Password);
                 if(account != null) {
                     try {
                         return Ok(_jwtHandler.GenerateJwtToken(account));
@@ -29,7 +32,7 @@ namespace Api.Controllers {
                     }
                 }
             } 
-            return BadRequest();
+            return BadRequest("Invalid credentials");
         }
     }
 }

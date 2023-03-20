@@ -7,21 +7,42 @@ using InfrastructureLayer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors();
 
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(conf =>
+{
+    conf.SwaggerDoc("v1", new OpenApiInfo
+    {
+        //Version = "v1",
+        //Title = "Test API",
+        //Description = "A simple example for swagger api information",
+        //TermsOfService = new Uri("https://example.com/terms"),
+        //Contact = new OpenApiContact
+        //{
+        //    Name = "Your Name XYZ",
+        //    Email = "xyz@gmail.com",
+        //    Url = new Uri("https://example.com"),
+        //},
+        //License = new OpenApiLicense
+        //{
+        //    Name = "Use under OpenApiLicense",
+        //    Url = new Uri("https://example.com/license"),
+        //}
+    });
+});
 
 builder.Services.AddControllers();
 
 //db
-builder.Services.AddOnion(builder.Configuration["ConnectionStrings:Database"]);
+builder.Services.AddOnion(builder.Configuration["ConnectionStrings:CMS"]);
 
 //ngrok
-if(builder.Environment.IsDevelopment())
-    builder.Services.AddHostedService<TunnelService>();
+// if(builder.Environment.IsDevelopment())
+//     builder.Services.AddHostedService<TunnelService>();
 
 //utils
 builder.Services.AddScoped<IJwtHandler, JwtHandler>();
@@ -69,8 +90,10 @@ app.UseCors(_ => _.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
 //swagger
 app.UseSwagger();
-app.UseSwaggerUI(_ => {
-
+app.UseSwaggerUI(conf =>
+{
+    conf.SwaggerEndpoint("/swagger/v1/swagger.json", "SwaggerDemoApplication V1");
+    //conf.RoutePrefix = "";
 });
 
 //auth

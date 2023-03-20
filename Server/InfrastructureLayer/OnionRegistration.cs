@@ -1,6 +1,7 @@
 using System.Data.SQLite;
 using ApplicationLayer;
 using ApplicationLayer.IRepositories;
+using Dapper;
 using InfrastructureLayer.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using SqlKata.Compilers;
@@ -12,7 +13,12 @@ namespace InfrastructureLayer
     {
         public static void AddOnion(this IServiceCollection services, string connectionString)
         {
-            services.AddTransient(_ => {
+            SqlMapper.AddTypeHandler(new SqliteHelper());
+            SqlMapper.RemoveTypeMap(typeof(Guid));
+            SqlMapper.RemoveTypeMap(typeof(Guid?));
+            
+            services.AddTransient(_ =>
+            {
                 var connection = new SQLiteConnection(connectionString);
                 var compiler = new SqliteCompiler();
                 return new QueryFactory(connection, compiler);
