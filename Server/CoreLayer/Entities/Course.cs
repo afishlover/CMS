@@ -1,5 +1,7 @@
-namespace CoreLayer.Entities {
-    public class Course {
+namespace CoreLayer.Entities
+{
+    public class Course
+    {
         public Guid CourseId { get; set; }
         public string TeacherCode { get; set; }
         public Teacher Teacher { get; set; }
@@ -8,6 +10,8 @@ namespace CoreLayer.Entities {
         public DateTime EndDate { get; set; }
         public DateTime SinceDate { get; set; }
         public DateTime LastUpdate { get; set; }
+        public int CategoryId { get; set; }
+        public Category Category { get; set; }
         public string CreatorId { get; set; }
     }
 }
