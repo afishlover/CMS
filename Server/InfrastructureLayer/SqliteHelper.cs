@@ -1,17 +1,18 @@
 using System.Data;
 using Dapper;
 
-namespace InfrastructureLayer {
-    public class SqliteHelper : SqlMapper.TypeHandler<Guid>
+namespace InfrastructureLayer
 {
-    public override void SetValue(IDbDataParameter parameter, Guid guid)
+    public class SqliteHelper : SqlMapper.TypeHandler<Guid>
     {
-        parameter.Value = guid.ToString();
-    }
+        public override void SetValue(IDbDataParameter parameter, Guid guid)
+        {
+            parameter.Value = guid.ToString();
+        }
 
-    public override Guid Parse(object value)
-    {
-        return new Guid((string)value);
+        public override Guid Parse(object value)
+        {
+            return new Guid((string)value);
+        }
     }
-}
 }

@@ -6,6 +6,7 @@ namespace CoreLayer.Entities
         public string TeacherCode { get; set; }
         public Teacher Teacher { get; set; }
         public string CourseName { get; set; }
+        public string CourseCode { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public DateTime SinceDate { get; set; }
