@@ -3,6 +3,7 @@ using System.Text;
 using Api.Interfaces;
 using Api.Services;
 using Api.Utils;
+using InfrastructureLayer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
@@ -14,6 +15,9 @@ builder.Services.AddCors();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddControllers();
+
+//db
+builder.Services.AddOnion(builder.Configuration["ConnectionStrings:Database"]);
 
 //ngrok
 if(builder.Environment.IsDevelopment())
