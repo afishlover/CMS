@@ -1,9 +1,18 @@
 using ApplicationLayer.IRepositories;
 using CoreLayer.Entities;
+using SqlKata.Execution;
 
-namespace InfrastructureLayer.Repositories {
+namespace InfrastructureLayer.Repositories
+{
     public class BaseUserRepository : IBaseUserRepository
     {
+        private readonly QueryFactory _queryFactory;
+
+        public BaseUserRepository(QueryFactory queryFactory)
+        {
+            _queryFactory = queryFactory;
+        }
+
         public Task<int> AddAsync(BaseUser entity)
         {
             throw new NotImplementedException();
@@ -14,9 +23,9 @@ namespace InfrastructureLayer.Repositories {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<BaseUser>> GetAllAsync()
+        public async Task<IEnumerable<BaseUser>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _queryFactory.Query(Table.BASEUSERS_TABLE).GetAsync<BaseUser>();
         }
 
         public Task<BaseUser> GetByIdAsync(int id)

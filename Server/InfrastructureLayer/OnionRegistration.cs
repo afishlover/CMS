@@ -13,9 +13,11 @@ namespace InfrastructureLayer
     {
         public static void AddOnion(this IServiceCollection services, string connectionString)
         {
-            SqlMapper.AddTypeHandler(new SqliteHelper());
+            SqlMapper.AddTypeHandler(new GuidHandler());
             SqlMapper.RemoveTypeMap(typeof(Guid));
             SqlMapper.RemoveTypeMap(typeof(Guid?));
+            SqlMapper.RemoveTypeMap(typeof(DateTimeOffset));
+            SqlMapper.AddTypeHandler(DateTimeHandler.Default);
             
             services.AddTransient(_ =>
             {
@@ -25,6 +27,7 @@ namespace InfrastructureLayer
             });
 
             services.AddTransient<IAccountRepository, AccountRepository>();
+            services.AddTransient<IBaseUserRepository, BaseUserRepository>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
         }
     }

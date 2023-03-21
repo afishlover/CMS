@@ -14,7 +14,6 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors();
-
 builder.Services.AddSwaggerGen(conf =>
 {
     conf.SwaggerDoc("v1", new OpenApiInfo
@@ -64,6 +63,7 @@ builder.Services.AddSwaggerGen(conf =>
     });
 
 });
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddControllers();
 

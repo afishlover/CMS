@@ -5,10 +5,12 @@ namespace InfrastructureLayer
 {
     public class UnitOfWork : IUnitOfWork
     {
-        public UnitOfWork(IAccountRepository accountRepository)
+        public UnitOfWork(IAccountRepository accountRepository, IBaseUserRepository baseUserRepository)
         {
             _accountRepository = accountRepository;
+            _baseUserRepository = baseUserRepository;
         }
         public IAccountRepository _accountRepository { get; }
+        public IBaseUserRepository _baseUserRepository { get; }
     }
 }

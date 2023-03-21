@@ -37,17 +37,5 @@ namespace Api.Controllers {
             } 
             return BadRequest("Invalid credentials");
         }
-
-        [HttpPost("[action]")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostHMAC(string email) {
-            if(email.ToLower().Equals("sonkahe161888@fpt.edu.vn")) {
-               await _iSendMailService.SendEmailAsync(email, "Test mail", "Hello son ak");
-                return Ok();
-            }
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
     }
 }
