@@ -5,7 +5,6 @@ using Api.Interfaces.IServices;
 using Api.Models;
 using Api.Services;
 using Api.Utils;
-using Api.Utils.HMAC;
 using InfrastructureLayer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.FileProviders;
