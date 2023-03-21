@@ -1,8 +1,11 @@
 using System.Net;
 using System.Text;
 using Api.Interfaces;
+using Api.Interfaces.IServices;
+using Api.Models;
 using Api.Services;
 using Api.Utils;
+using Api.Utils.HMAC;
 using InfrastructureLayer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.FileProviders;
@@ -33,6 +36,34 @@ builder.Services.AddSwaggerGen(conf =>
         //    Url = new Uri("https://example.com/license"),
         //}
     });
+    conf.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
+    });
+
+    conf.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+
+            //The name of the previously defined security scheme.
+                    Id = "Bearer"
+                }
+
+            },
+            new List<string>()
+        }
+    });
+
 });
 
 builder.Services.AddControllers();
@@ -45,7 +76,10 @@ builder.Services.AddOnion(builder.Configuration["ConnectionStrings:CMS"]);
 //     builder.Services.AddHostedService<TunnelService>();
 
 //utils
+builder.Services.AddOptions (); 
+builder.Services.Configure<MailSetting>(builder.Configuration.GetSection("MailSetting"));  
 builder.Services.AddScoped<IJwtHandler, JwtHandler>();
+builder.Services.AddTransient<ISendMailService, SendMailService>();
 
 //authentication scheme
 builder.Services
@@ -82,7 +116,8 @@ builder.Services
         };
     });
 
-builder.Services.AddAuthorization(options => {
+builder.Services.AddAuthorization(options =>
+{
 });
 
 var app = builder.Build();

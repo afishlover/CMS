@@ -6,5 +6,6 @@ namespace ApplicationLayer.IRepositories
     {
         public Task<Account?> GetAccountByEmailAndPasswordAsync(string email, string password);
         public Task<Account?> GetAccountByEmailAsync(string email);
+        public Task<Account?> GetAccountByIdAsync(Guid accountId);
     }
 }

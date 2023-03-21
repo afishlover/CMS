@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Api.Interfaces.IServices;
 using Api.Models;
 using MailKit.Security;
@@ -57,9 +58,17 @@ namespace Api.Services
 
         }
 
-        public Task SendEmailsAsync(ICollection<string> emails, string subject, string htmlMessage)
+        public async Task SendEmailsAsync(ICollection<string> emails, string subject, string htmlMessage)
         {
-            throw new NotImplementedException();
+            ConcurrentBag<string> receivers = new ConcurrentBag<string>(emails);
+
+            ParallelOptions options = new ParallelOptions {
+                MaxDegreeOfParallelism = 10
+            };
+
+            await Parallel.ForEachAsync(receivers, options, async (email, token) => {
+                await SendEmailAsync(email, subject, htmlMessage);
+            });
         }
     }
 }

@@ -1,4 +1,5 @@
 using Api.Interfaces;
+using Api.Interfaces.IServices;
 using Api.Models.DTOs;
 using ApplicationLayer;
 using Microsoft.AspNetCore.Mvc;
@@ -9,11 +10,13 @@ namespace Api.Controllers {
     [Route("[controller]")]
     public class TokenController : ControllerBase {
         private readonly IJwtHandler _jwtHandler;
+        private readonly ISendMailService _iSendMailService;
         private readonly IUnitOfWork _unitOfWork;
-        public TokenController(IJwtHandler jwtHandler, IUnitOfWork unitOfWork)
+        public TokenController(IJwtHandler jwtHandler, IUnitOfWork unitOfWork, ISendMailService iSendMailService)
         {
             _jwtHandler = jwtHandler;
             _unitOfWork = unitOfWork;
+            _iSendMailService = iSendMailService;
         }
 
         [HttpPost("[action]")]
@@ -33,6 +36,18 @@ namespace Api.Controllers {
                 }
             } 
             return BadRequest("Invalid credentials");
+        }
+
+        [HttpPost("[action]")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> PostHMAC(string email) {
+            if(email.ToLower().Equals("sonkahe161888@fpt.edu.vn")) {
+               await _iSendMailService.SendEmailAsync(email, "Test mail", "Hello son ak");
+                return Ok();
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
 }

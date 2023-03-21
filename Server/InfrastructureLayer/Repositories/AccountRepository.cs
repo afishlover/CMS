@@ -25,7 +25,7 @@ namespace InfrastructureLayer.Repositories
 
         public async Task<Account?> GetAccountByEmailAndPasswordAsync(string email, string password)
         {
-            var account = await _queryFactory.Query("Accounts").Where("Email", "=", email).FirstOrDefaultAsync<Account>();
+            var account = await _queryFactory.Query(Table.ACCOUNTS_TABLE).Where(Table.ACCOUNTS_TABLE_EMAIL, "=", email).FirstOrDefaultAsync<Account>();
             if (account != null)
             {
                 bool flag = BC.Verify(password, account.Password);
@@ -36,12 +36,17 @@ namespace InfrastructureLayer.Repositories
 
         public async Task<Account?> GetAccountByEmailAsync(string email)
         {
-            return await _queryFactory.Query("Accounts").Where("Email", "=", email).FirstOrDefaultAsync<Account>();
+            return await _queryFactory.Query(Table.ACCOUNTS_TABLE).Where(Table.ACCOUNTS_TABLE_EMAIL, "=", email).FirstOrDefaultAsync<Account>();
         }
 
-        public Task<IReadOnlyList<Account>> GetAllAsync()
+        public async Task<Account?> GetAccountByIdAsync(Guid accountId)
         {
-            throw new NotImplementedException();
+            return await _queryFactory.Query(Table.ACCOUNTS_TABLE).Where(Table.ACCOUNTS_TABLE_ACCOUNTID, "=", accountId).FirstOrDefaultAsync<Account>();
+        }
+
+        public async Task<IEnumerable<Account>> GetAllAsync()
+        {
+            return await _queryFactory.Query(Table.ACCOUNTS_TABLE).GetAsync<Account>();
         }
 
         public Task<Account> GetByIdAsync(int id)
