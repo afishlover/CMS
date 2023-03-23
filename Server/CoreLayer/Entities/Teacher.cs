@@ -1,3 +1,5 @@
+using CoreLayer.Enums;
+
 namespace CoreLayer.Entities {
     public class Teacher {
         public Guid TeacherId { get; set; }

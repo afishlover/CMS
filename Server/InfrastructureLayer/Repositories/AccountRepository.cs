@@ -1,5 +1,6 @@
 using ApplicationLayer.IRepositories;
 using CoreLayer.Entities;
+using SqlKata;
 using BC = BCrypt.Net.BCrypt;
 using SqlKata.Execution;
 
@@ -43,7 +44,7 @@ namespace InfrastructureLayer.Repositories
         {
             return await _queryFactory.Query(Table.ACCOUNTS_TABLE).Where(Table.ACCOUNTS_TABLE_ACCOUNTID, "=", accountId).FirstOrDefaultAsync<Account>();
         }
-
+        
         public async Task<IEnumerable<Account>> GetAllAsync()
         {
             return await _queryFactory.Query(Table.ACCOUNTS_TABLE).GetAsync<Account>();
