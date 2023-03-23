@@ -1,18 +1,25 @@
 ﻿using ApplicationLayer.IRepositories;
 using CoreLayer.Entities;
+using SqlKata.Execution;
 
 namespace InfrastructureLayer.Repositories;
 
 public class CourseRepository : ICourseRepository
 {
+    private readonly QueryFactory _queryFactory;
+
+    public CourseRepository(QueryFactory queryFactory)
+    {
+        _queryFactory = queryFactory;
+    }
     public Task<Course> GetByIdAsync(Guid id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<Course>> GetAllAsync()
+    public async Task<IEnumerable<Course>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        return await _queryFactory.Query(Table.COURSES_TABLE).GetAsync<Course>();
     }
 
     public Task<int> AddAsync(Course entity)

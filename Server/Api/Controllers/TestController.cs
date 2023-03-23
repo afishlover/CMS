@@ -13,10 +13,12 @@ namespace Api.Controllers
     public class TestController : ControllerBase
     {
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public TestController(IMapper mapper)
+        public TestController(IMapper mapper, IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -27,6 +29,12 @@ namespace Api.Controllers
         [HttpGet]
         public string GetGuid() {
             return Guid.NewGuid().ToString();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> TestRepo()
+        {
+            return Ok(await _unitOfWork._courseRepository.GetAllAsync());
         }
     }
 }

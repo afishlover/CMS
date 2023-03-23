@@ -4,6 +4,6 @@ namespace CoreLayer.Entities {
         public Student Student { get; set; }
         public Guid CourseId { get; set; }
         public Course Course { get; set; }
-        public DateTime EnrollDate { get; set; }
+        public DateTime? EnrollDate { get; set; }
     }
 }

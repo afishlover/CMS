@@ -18,9 +18,9 @@ namespace Api.Controllers {
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetStudentCoursesByStudentId([FromBody] Guid studentId)
+        public async Task<IActionResult> GetStudentCoursesByStudentId([FromBody] Guid? studentId)
         {
-            var studentCourses = await _unitOfWork._studentCourseRepository.GetByStudentIdAsync(studentId);
+            var studentCourses = await _unitOfWork._studentCourseRepository.GetAllAsync();
             var courses = await _unitOfWork._courseRepository.GetAllAsync();
             var categories = await _unitOfWork._categoryRepository.GetAllAsync();
             var result = studentCourses
@@ -30,7 +30,6 @@ namespace Api.Controllers {
                     CategoryId = c.CategoryId,
                     CourseCode = scj.c.CourseCode,
                     CourseName = scj.c.CourseName,
-                    EnrollDate = scj.sc.EnrollDate
                 });
             return Ok(result);
         }

@@ -16,9 +16,9 @@ public class StudentCourseRepository : IStudentCourseRepository
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<StudentCourse>> GetAllAsync()
+    public async Task<IEnumerable<StudentCourse>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        return await _queryFactory.Query(Table.STUDENTCOURSES_TABLE).GetAsync<StudentCourse>();
     }
 
     public Task<int> AddAsync(StudentCourse entity)

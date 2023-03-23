@@ -30,6 +30,7 @@ namespace InfrastructureLayer
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<ICourseRepository, CourseRepository>();
+            services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddTransient<IStudentCourseRepository, StudentCourseRepository>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
         }
