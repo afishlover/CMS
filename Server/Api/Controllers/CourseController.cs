@@ -30,7 +30,6 @@ namespace Api.Controllers {
                     CategoryId = c.CategoryId,
                     CourseCode = scj.c.CourseCode,
                     CourseName = scj.c.CourseName,
-                    TeacherCode = scj.c.TeacherCode,
                     EnrollDate = scj.sc.EnrollDate
                 });
             return Ok(result);
