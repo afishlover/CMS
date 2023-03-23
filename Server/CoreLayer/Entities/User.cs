@@ -2,7 +2,7 @@ using CoreLayer.Enums;
 
 namespace CoreLayer.Entities
 {
-    public class BaseUser
+    public class User
     {
         public Guid UserId { get; set; }
         public string FirstName { get; set; }

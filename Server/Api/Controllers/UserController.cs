@@ -1,6 +1,7 @@
 ﻿using Api.Models.DTOs;
 using ApplicationLayer;
 using AutoMapper;
+using CoreLayer.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -19,16 +20,20 @@ namespace Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetDetailedUserInformation()
+        public async Task<IActionResult> GetBasicUserInfo()
         {
             var accounts = await _unitOfWork._accountRepository.GetAllAsync();
-            var users = await _unitOfWork._baseUserRepository.GetAllAsync();
+            var users = await _unitOfWork.UserRepository.GetAllAsync();
             var result = accounts.Join(users, account => account.AccountId, user => user.AccountId, (account, user) =>
-                new UserDTO()
+                new UserDTO
                 {
                     AccountId = account.AccountId,
                     UserId = user.UserId,
-                    Email = account.Email
+                    Email = account.Email,
+                    Name = user.GetFullName(),
+                    Phone = user.Phone,
+                    Role = Enum.GetName(typeof(Role), account.Role),
+                    Status = Enum.GetName(typeof(Status), account.Status),
                 });
             return Ok(result);
         }

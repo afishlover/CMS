@@ -4,16 +4,16 @@ using SqlKata.Execution;
 
 namespace InfrastructureLayer.Repositories
 {
-    public class BaseUserRepository : IBaseUserRepository
+    public class UserRepository : IUserRepository
     {
         private readonly QueryFactory _queryFactory;
 
-        public BaseUserRepository(QueryFactory queryFactory)
+        public UserRepository(QueryFactory queryFactory)
         {
             _queryFactory = queryFactory;
         }
 
-        public Task<int> AddAsync(BaseUser entity)
+        public Task<int> AddAsync(User entity)
         {
             throw new NotImplementedException();
         }
@@ -23,17 +23,17 @@ namespace InfrastructureLayer.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<BaseUser>> GetAllAsync()
+        public async Task<IEnumerable<User>> GetAllAsync()
         {
-            return await _queryFactory.Query(Table.BASEUSERS_TABLE).GetAsync<BaseUser>();
+            return await _queryFactory.Query(Table.BASEUSERS_TABLE).GetAsync<User>();
         }
 
-        public Task<BaseUser> GetByIdAsync(int id)
+        public Task<User> GetByIdAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<int> UpdateAsync(BaseUser entity)
+        public Task<int> UpdateAsync(User entity)
         {
             throw new NotImplementedException();
         }

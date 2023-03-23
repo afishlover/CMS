@@ -27,7 +27,7 @@ namespace InfrastructureLayer
             });
 
             services.AddTransient<IAccountRepository, AccountRepository>();
-            services.AddTransient<IBaseUserRepository, BaseUserRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
         }
     }

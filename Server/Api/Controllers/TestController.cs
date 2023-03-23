@@ -28,11 +28,5 @@ namespace Api.Controllers
         public string GetGuid() {
             return Guid.NewGuid().ToString();
         }
-
-        [HttpGet]
-        public IActionResult GetMapper()
-        {
-            return Ok(_mapper.Map<BaseUserDTO>(new BaseUser() { FirstName = "Trung", MiddleName = "Bui", LastName = "Duc"}));
-        }
     }
 }

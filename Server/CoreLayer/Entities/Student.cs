@@ -6,6 +6,6 @@ namespace CoreLayer.Entities {
         public string StudentCode { get; set; }
         public Guid BaseUserId { get; set; }
         public Major Major { get; set; }
-        public BaseUser BaseUser { get; set; }
+        public User User { get; set; }
     }
 }

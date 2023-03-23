@@ -5,6 +5,6 @@ namespace InfrastructureLayer {
         public static string ACCOUNTS_TABLE_PASSWORD = "Password";
         public static string ACCOUNTS_TABLE_ACCOUNTID = "AccountId";
 
-        public static string BASEUSERS_TABLE = "BaseUsers";
+        public static string BASEUSERS_TABLE = "Users";
     }
 }

@@ -7,6 +7,6 @@ namespace CoreLayer.Entities {
         public int DepartmentId { get; set; }
         public Department Department { get; set; }
         public Guid BaseUserId { get; set; }
-        public BaseUser BaseUser { get; set; }
+        public User User { get; set; }
     }
 }
