@@ -5,7 +5,7 @@ public class StudentCourseDTO
     public string TeacherCode { get; set; }
     public string CourseName { get; set; }
     public string CourseCode { get; set; }
-    public DateTime EnrollDate { get; set; }
+    public string EnrollDate { get; set; }
     public Guid CategoryId { get; set; }
 }
 /*

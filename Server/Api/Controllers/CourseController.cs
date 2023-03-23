@@ -23,13 +23,17 @@ namespace Api.Controllers {
             var studentCourses = await _unitOfWork._studentCourseRepository.GetAllAsync();
             var courses = await _unitOfWork._courseRepository.GetAllAsync();
             var categories = await _unitOfWork._categoryRepository.GetAllAsync();
+            var teachers = await _unitOfWork._teacherRepository.GetAllAsync();
             var result = studentCourses
                 .Join(courses, sc => sc.CourseId, c => c.CourseId, (sc, c) => new {sc, c})
-                .Join(categories, scj => scj.c.CategoryId, c => c.CategoryId, (scj, c) => new StudentCourseDTO
+                .Join(categories, scj => scj.c.CategoryId, c => c.CategoryId, (scj, c) => new {scj, c})
+                .Join(teachers, scjcj => scjcj.scj.c.TeacherId, t => t.TeacherId, (scjcj, t)  => new StudentCourseDTO
                 {
-                    CategoryId = c.CategoryId,
-                    CourseCode = scj.c.CourseCode,
-                    CourseName = scj.c.CourseName,
+                    CategoryId = scjcj.c.CategoryId,
+                    CourseCode = scjcj.scj.c.CourseCode,
+                    CourseName = scjcj.scj.c.CourseName,
+                    EnrollDate = scjcj.scj.sc.EnrollDate != null ? scjcj.scj.sc.EnrollDate.Value.ToString("dd/MM/yyyy") : string.Empty,
+                    TeacherCode = t.TeacherCode
                 });
             return Ok(result);
         }
