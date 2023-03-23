@@ -2,7 +2,6 @@
 using ApplicationLayer;
 using AutoMapper;
 using CoreLayer.Enums;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -29,8 +28,8 @@ namespace Api.Controllers
             try
             {
                 var accounts = await _unitOfWork._accountRepository.GetAllAsync();
-                var users = await _unitOfWork.UserRepository.GetAllAsync();
-                var result = accounts.Join(users, account => account.AccountId, user => user.AccountId,
+                var users = await _unitOfWork._userRepository.GetAllAsync();
+                var result = accounts.Join(users, acc => acc.AccountId, u => u.AccountId,
                     (account, user) =>
                         new UserDTO
                         {
