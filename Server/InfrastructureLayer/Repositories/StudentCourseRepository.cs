@@ -11,12 +11,12 @@ public class StudentCourseRepository : IStudentCourseRepository
     {
         _queryFactory = queryFactory;
     }
-    public async Task<StudentCourse?> GetById(Guid id)
+    public async Task<StudentCourse?> GetByIdAsync(Guid id)
     {
         return await _queryFactory.Query(Table.STUDENTCOURSES_TABLE).Where(Table.STUDENTCOURSES_TABLE_COURSEID, "=", id).FirstOrDefaultAsync<StudentCourse>();
     }
 
-    public async Task<IEnumerable<StudentCourse>> GetAll()
+    public async Task<IEnumerable<StudentCourse>> GetAllAsync()
     {
         return await _queryFactory.Query(Table.STUDENTCOURSES_TABLE).GetAsync<StudentCourse>();
     }
@@ -26,17 +26,17 @@ public class StudentCourseRepository : IStudentCourseRepository
         return await _queryFactory.Query(Table.STUDENTCOURSES_TABLE).Where(Table.STUDENTCOURSES_TABLE_STUDENTID, "=", studentId).GetAsync<StudentCourse>();
     }
 
-    public Task<int> Add(StudentCourse entity)
+    public Task<int> AddAsync(StudentCourse entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<int> Update(StudentCourse entity)
+    public Task<int> UpdateAsync(StudentCourse entity)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<int> Delete(Guid id)
+    public async Task<int> DeleteAsync(Guid id)
     {
         return await _queryFactory.Query(Table.STUDENTCOURSES_TABLE).Where(Table.STUDENTCOURSES_TABLE_COURSEID, "=", id).DeleteAsync();
     }

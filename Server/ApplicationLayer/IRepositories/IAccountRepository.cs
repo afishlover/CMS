@@ -4,7 +4,7 @@ namespace ApplicationLayer.IRepositories
 {
     public interface IAccountRepository : IGenericRepository<Account>
     {
-        public Task<Account?> GetAccountByEmailAndPassword(string email, string password);
-        public Task<Account?> GetAccountByEmail(string email);
+        public Task<Account?> GetAccountByEmailAndPasswordAsync(string email, string password);
+        public Task<Account?> GetAccountByEmailAsync(string email);
     }
 }

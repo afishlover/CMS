@@ -27,10 +27,10 @@ namespace Api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetStudentCoursesByStudentId([FromBody] Guid? studentId)
         {
-            var studentCourses = await _unitOfWork._studentCourseRepository.GetAll();
-            var courses = await _unitOfWork._courseRepository.GetAll();
-            var categories = await _unitOfWork._categoryRepository.GetAll();
-            var teachers = await _unitOfWork._teacherRepository.GetAll();
+            var studentCourses = await _unitOfWork._studentCourseRepository.GetAllAsync();
+            var courses = await _unitOfWork._courseRepository.GetAllAsync();
+            var categories = await _unitOfWork._categoryRepository.GetAllAsync();
+            var teachers = await _unitOfWork._teacherRepository.GetAllAsync();
             var result = studentCourses
                 .Where(sc => sc.StudentId.Equals(studentId))
                 .Join(courses, sc => sc.CourseId, c => c.CourseId, (sc, c) => new { sc, c })
@@ -46,12 +46,29 @@ namespace Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetTeacherCoursesByTeacherId([FromBody] Guid teacherId)
+        public async Task<IActionResult> GetTeacherCourses()
         {
             try
             {
-                var courses = await _unitOfWork._courseRepository.GetAll();
-                var teacherCourses = courses.Where(c => c.TeacherId.Equals(teacherId)).Select(_ => _mapper.Map<Course, TeacherCourseDTO>(_));
+
+                Request.Headers.TryGetValue("Authorization", out var values);
+                var accountId = _jwtHandler.GetAccountIdFromJwt(values);
+                var account = await _unitOfWork._accountRepository.GetByIdAsync(new Guid(accountId));
+
+                if (account == null)
+                {
+                    return NotFound("Account not recognized");
+                }
+
+                var teacher = await _unitOfWork._teacherRepository.GetTeacherByUserIdAsync(account.AccountId);
+
+                if (teacher == null)
+                {
+                    return NotFound("This not have a profile");
+                }
+
+                var courses = await _unitOfWork._courseRepository.GetAllAsync();
+                var teacherCourses = courses.Where(c => c.TeacherId.Equals(teacher.TeacherId)).Select(_ => _mapper.Map<Course, TeacherCourseDTO>(_));
                 if (!teacherCourses.Any())
                 {
                     return StatusCode(StatusCodes.Status404NotFound);
@@ -75,21 +92,21 @@ namespace Api.Controllers
             {
                 Request.Headers.TryGetValue("Authorization", out var values);
                 var accountId = _jwtHandler.GetAccountIdFromJwt(values);
-                var student = await _unitOfWork._accountRepository.GetById(new Guid(accountId));
+                var student = await _unitOfWork._accountRepository.GetByIdAsync(new Guid(accountId));
 
                 if (student == null)
                 {
                     return NotFound("Account not recognized");
                 }
 
-                var studentCourse = await _unitOfWork._studentCourseRepository.GetById(courseId);
+                var studentCourse = await _unitOfWork._studentCourseRepository.GetByIdAsync(courseId);
 
                 if (studentCourse == null)
                 {
                     return NotFound("Student was not enroll this course!");
                 }
 
-                await _unitOfWork._studentCourseRepository.Delete(courseId);
+                await _unitOfWork._studentCourseRepository.DeleteAsync(courseId);
                 return Ok();
             }
             catch (Exception e)

@@ -12,5 +12,6 @@ namespace InfrastructureLayer {
         public static string COURSES_TABLE = "Courses";
         public static string TEACHER_TABLE = "Teachers";
         public static string STUDENTCOURSES_TABLE_COURSEID = "CourseId";
+        internal static string TEACHER_TABLE_ACCOUNTID = "AccountId";
     }
 }

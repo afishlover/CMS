@@ -1,4 +1,5 @@
-﻿using Api.Models.DTOs;
+﻿using Api.Interfaces;
+using Api.Models.DTOs;
 using ApplicationLayer;
 using AutoMapper;
 using CoreLayer.Enums;
@@ -12,11 +13,13 @@ namespace Api.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IJwtHandler _jwtHandler;
 
-        public UserController(IMapper mapper, IUnitOfWork unitOfWork)
+        public UserController(IMapper mapper, IUnitOfWork unitOfWork, IJwtHandler jwtHandler)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _jwtHandler = jwtHandler;
         }
 
         [HttpPost]
@@ -27,8 +30,8 @@ namespace Api.Controllers
         {
             try
             {
-                var accounts = await _unitOfWork._accountRepository.GetAll();
-                var users = await _unitOfWork._userRepository.GetAll();
+                var accounts = await _unitOfWork._accountRepository.GetAllAsync();
+                var users = await _unitOfWork._userRepository.GetAllAsync();
                 var result = accounts.Join(users, acc => acc.AccountId, u => u.AccountId,
                     (account, user) =>
                         new UserDTO

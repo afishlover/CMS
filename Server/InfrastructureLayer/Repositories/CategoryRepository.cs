@@ -11,27 +11,27 @@ public class CategoryRepository : ICategoryRepository
     {
         _queryFactory = queryFactory;
     }
-    public Task<Category?> GetById(Guid id)
+    public Task<Category?> GetByIdAsync(Guid id)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<Category>> GetAll()
+    public async Task<IEnumerable<Category>> GetAllAsync()
     {
         return await _queryFactory.Query(Table.CATEGORIES_TABLE).GetAsync<Category>();
     }
 
-    public Task<int> Add(Category entity)
+    public Task<int> AddAsync(Category entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<int> Update(Category entity)
+    public Task<int> UpdateAsync(Category entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<int> Delete(Guid id)
+    public Task<int> DeleteAsync(Guid id)
     {
         throw new NotImplementedException();
     }

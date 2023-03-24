@@ -34,7 +34,7 @@ namespace Api.Controllers
         [HttpGet]
         public async Task<IActionResult> TestRepo()
         {
-            return Ok(await _unitOfWork._courseRepository.GetAll());
+            return Ok(await _unitOfWork._courseRepository.GetAllAsync());
         }
     }
 }
