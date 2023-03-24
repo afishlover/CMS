@@ -4,7 +4,9 @@ using System.Security.Claims;
 using System.Text;
 using Api.Interfaces;
 using CoreLayer.Entities;
+using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 
 namespace Api.Utils
 {
@@ -37,5 +39,14 @@ namespace Api.Utils
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        public string GetAccountIdFromJwt(StringValues headerValue)
+        {
+            var token = headerValue.ToString();
+            var tokens = token.Split(" ");
+            var handler = new JwtSecurityTokenHandler();
+            var jwtSecurityToken = handler.ReadJwtToken(tokens.Count() == 1 ? tokens[0] : tokens[1]);
+            var accountId = jwtSecurityToken.Claims.First(claim => claim.Type == "Id").Value;
+            return accountId;
+        }
     }
 }

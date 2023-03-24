@@ -1,11 +1,9 @@
-using System.IdentityModel.Tokens.Jwt;
+using Api.Interfaces;
 using Api.Models.DTOs;
 using ApplicationLayer;
 using AutoMapper;
 using CoreLayer.Entities;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
 
 namespace Api.Controllers
 {
@@ -14,12 +12,14 @@ namespace Api.Controllers
     public class CourseController : ControllerBase
     {
         private readonly IMapper _mapper;
+        private readonly IJwtHandler _jwtHandler;
         private readonly IUnitOfWork _unitOfWork;
 
-        public CourseController(IMapper mapper, IUnitOfWork unitOfWork)
+        public CourseController(IMapper mapper, IUnitOfWork unitOfWork, IJwtHandler jwtHandler)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _jwtHandler = jwtHandler;
         }
 
         [HttpPost]
@@ -74,13 +74,7 @@ namespace Api.Controllers
             try
             {
                 Request.Headers.TryGetValue("Authorization", out var values);
-                var token = values.ToString();
-                var tokens = token.Split(" ");
-
-
-                var handler = new JwtSecurityTokenHandler();
-                var jwtSecurityToken = handler.ReadJwtToken(tokens.Count() == 1? tokens[0] : tokens[1]);
-                var accountId = jwtSecurityToken.Claims.First(claim => claim.Type == "Id").Value;
+                var accountId = _jwtHandler.GetAccountIdFromJwt(values);
                 var student = await _unitOfWork._accountRepository.GetById(new Guid(accountId));
 
                 if (student == null)
