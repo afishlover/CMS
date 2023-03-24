@@ -12,27 +12,27 @@ public class CourseRepository : ICourseRepository
     {
         _queryFactory = queryFactory;
     }
-    public Task<Course> GetByIdAsync(Guid id)
+    public Task<Course?> GetById(Guid id)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<Course>> GetAllAsync()
+    public async Task<IEnumerable<Course>> GetAll()
     {
         return await _queryFactory.Query(Table.COURSES_TABLE).GetAsync<Course>();
     }
 
-    public Task<int> AddAsync(Course entity)
+    public Task Add(Course entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<int> UpdateAsync(Course entity)
+    public Task Update(Course entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<int> DeleteAsync(Guid id)
+    public Task Delete(Guid id)
     {
         throw new NotImplementedException();
     }

@@ -13,27 +13,27 @@ public class TeacherRepository : ITeacherRepository
         _queryFactory = queryFactory;
     }
 
-    public Task<Teacher> GetByIdAsync(Guid id)
+    public Task<Teacher?> GetById(Guid id)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<Teacher>> GetAllAsync()
+    public async Task<IEnumerable<Teacher>> GetAll()
     {
         return await _queryFactory.Query(Table.TEACHER_TABLE).GetAsync<Teacher>();
     }
 
-    public Task<int> AddAsync(Teacher entity)
+    public Task Add(Teacher entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<int> UpdateAsync(Teacher entity)
+    public Task Update(Teacher entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<int> DeleteAsync(Guid id)
+    public Task Delete(Guid id)
     {
         throw new NotImplementedException();
     }

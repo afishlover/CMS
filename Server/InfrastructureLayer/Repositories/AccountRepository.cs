@@ -14,12 +14,7 @@ namespace InfrastructureLayer.Repositories
             _queryFactory = queryFactory;
         }
 
-        public Task<int> AddAsync(Account entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Account?> GetAccountByEmailAndPasswordAsync(string email, string password)
+        public async Task<Account?> GetAccountByEmailAndPassword(string email, string password)
         {
             var account = await _queryFactory.Query(Table.ACCOUNTS_TABLE).Where(Table.ACCOUNTS_TABLE_EMAIL, "=", email).FirstOrDefaultAsync<Account>();
             if (account != null)
@@ -30,27 +25,32 @@ namespace InfrastructureLayer.Repositories
             return null;
         }
 
-        public async Task<Account?> GetAccountByEmailAsync(string email)
+        public async Task<Account?> GetAccountByEmail(string email)
         {
             return await _queryFactory.Query(Table.ACCOUNTS_TABLE).Where(Table.ACCOUNTS_TABLE_EMAIL, "=", email).FirstOrDefaultAsync<Account>();
         }
 
-        public async Task<Account> GetByIdAsync(Guid id)
+        public async Task<Account?> GetById(Guid id)
         {
             return await _queryFactory.Query(Table.ACCOUNTS_TABLE).Where(Table.ACCOUNTS_TABLE_ACCOUNTID, "=", id).FirstOrDefaultAsync<Account>();
         }
 
-        public async Task<IEnumerable<Account>> GetAllAsync()
+        public async Task<IEnumerable<Account>> GetAll()
         {
             return await _queryFactory.Query(Table.ACCOUNTS_TABLE).GetAsync<Account>();
         }
 
-        public Task<int> UpdateAsync(Account entity)
+        public Task Add(Account entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task<int> DeleteAsync(Guid id)
+        public Task Update(Account entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task Delete(Guid id)
         {
             throw new NotImplementedException();
         }

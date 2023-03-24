@@ -27,8 +27,8 @@ namespace Api.Controllers
         {
             try
             {
-                var accounts = await _unitOfWork._accountRepository.GetAllAsync();
-                var users = await _unitOfWork._userRepository.GetAllAsync();
+                var accounts = await _unitOfWork._accountRepository.GetAll();
+                var users = await _unitOfWork._userRepository.GetAll();
                 var result = accounts.Join(users, acc => acc.AccountId, u => u.AccountId,
                     (account, user) =>
                         new UserDTO

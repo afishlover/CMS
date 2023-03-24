@@ -13,27 +13,27 @@ namespace InfrastructureLayer.Repositories
             _queryFactory = queryFactory;
         }
 
-        public Task<int> AddAsync(User entity)
+        public Task<User?> GetById(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<User> GetByIdAsync(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<IEnumerable<User>> GetAllAsync()
+        public async Task<IEnumerable<User>> GetAll()
         {
             return await _queryFactory.Query(Table.USERS_TABLE).GetAsync<User>();
         }
 
-        public Task<int> UpdateAsync(User entity)
+        public Task Add(User entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task<int> DeleteAsync(Guid id)
+        public Task Update(User entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task Delete(Guid id)
         {
             throw new NotImplementedException();
         }

@@ -20,7 +20,7 @@ namespace Api.Controllers
         {
             try
             {
-                var users = await _unitOfWork._accountRepository.GetAllAsync();
+                var users = await _unitOfWork._accountRepository.GetAll();
                 return Ok(users);
             }
             catch (Exception e)

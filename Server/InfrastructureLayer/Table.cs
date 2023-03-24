@@ -7,9 +7,10 @@ namespace InfrastructureLayer {
 
         public static string USERS_TABLE = "Users";
         public static string STUDENTCOURSES_TABLE = "StudentCourses";
-        public static string STUDENTCOURSES_TABLE_STUDENTID = "StudentCourses";
+        public static string STUDENTCOURSES_TABLE_STUDENTID = "StudentId";
         public static string CATEGORIES_TABLE = "Categories";
         public static string COURSES_TABLE = "Courses";
         public static string TEACHER_TABLE = "Teachers";
+        public static string STUDENTCOURSES_TABLE_COURSEID = "CourseId";
     }
 }

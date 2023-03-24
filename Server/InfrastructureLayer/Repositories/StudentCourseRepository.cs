@@ -11,32 +11,33 @@ public class StudentCourseRepository : IStudentCourseRepository
     {
         _queryFactory = queryFactory;
     }
-    public Task<StudentCourse> GetByIdAsync(Guid id)
+    public Task<StudentCourse?> GetById(Guid id)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<StudentCourse>> GetAllAsync()
+    public async Task<IEnumerable<StudentCourse>> GetAll()
     {
         return await _queryFactory.Query(Table.STUDENTCOURSES_TABLE).GetAsync<StudentCourse>();
     }
 
-    public Task<int> AddAsync(StudentCourse entity)
+    public Task Add(StudentCourse entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<int> UpdateAsync(StudentCourse entity)
+    public Task Update(StudentCourse entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<int> DeleteAsync(Guid id)
+    public Task Delete(Guid id)
     {
-        throw new NotImplementedException();
+        _queryFactory.Query(Table.STUDENTCOURSES_TABLE).Where(Table.STUDENTCOURSES_TABLE_COURSEID, "=", id).AsDelete();
+        return Task.CompletedTask;
     }
 
-    public async Task<IEnumerable<StudentCourse>> GetByStudentIdAsync(Guid studentId)
+    public async Task<IEnumerable<StudentCourse>> GetByStudentId(Guid studentId)
     {
         return await _queryFactory.Query(Table.STUDENTCOURSES_TABLE).Where(Table.STUDENTCOURSES_TABLE_STUDENTID, "=", studentId).GetAsync<StudentCourse>();
     }

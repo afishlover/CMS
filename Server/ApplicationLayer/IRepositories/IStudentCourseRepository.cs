@@ -4,5 +4,5 @@ namespace ApplicationLayer.IRepositories;
 
 public interface IStudentCourseRepository : IGenericRepository<StudentCourse>
 {
-    public Task<IEnumerable<StudentCourse>> GetByStudentIdAsync(Guid studentId);
+    public Task<IEnumerable<StudentCourse>> GetByStudentId(Guid studentId);
 }

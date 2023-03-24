@@ -1,8 +1,11 @@
+using System.IdentityModel.Tokens.Jwt;
 using Api.Models.DTOs;
 using ApplicationLayer;
 using AutoMapper;
 using CoreLayer.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 
 namespace Api.Controllers
 {
@@ -24,10 +27,10 @@ namespace Api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetStudentCoursesByStudentId([FromBody] Guid? studentId)
         {
-            var studentCourses = await _unitOfWork._studentCourseRepository.GetAllAsync();
-            var courses = await _unitOfWork._courseRepository.GetAllAsync();
-            var categories = await _unitOfWork._categoryRepository.GetAllAsync();
-            var teachers = await _unitOfWork._teacherRepository.GetAllAsync();
+            var studentCourses = await _unitOfWork._studentCourseRepository.GetAll();
+            var courses = await _unitOfWork._courseRepository.GetAll();
+            var categories = await _unitOfWork._categoryRepository.GetAll();
+            var teachers = await _unitOfWork._teacherRepository.GetAll();
             var result = studentCourses
                 .Where(sc => sc.StudentId.Equals(studentId))
                 .Join(courses, sc => sc.CourseId, c => c.CourseId, (sc, c) => new { sc, c })
@@ -41,12 +44,64 @@ namespace Api.Controllers
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetTeacherCoursesByTeacherId([FromBody] Guid teacherId)
         {
-            var courses = await _unitOfWork._courseRepository.GetAllAsync();
-            var teacherCourses = courses.Where(c => c.TeacherId.Equals(teacherId)).Select(_ => _mapper.Map<Course, TeacherCourseDTO>(_));
-            return Ok(teacherCourses);
+            try
+            {
+                var courses = await _unitOfWork._courseRepository.GetAll();
+                var teacherCourses = courses.Where(c => c.TeacherId.Equals(teacherId)).Select(_ => _mapper.Map<Course, TeacherCourseDTO>(_));
+                if (!teacherCourses.Any())
+                {
+                    return StatusCode(StatusCodes.Status404NotFound);
+                }
+                return Ok(teacherCourses);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+
+        }
+
+        [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UnEnrollStudentCourseById(Guid courseId)
+        {
+            try
+            {
+                Request.Headers.TryGetValue("Authorization", out var values);
+                var token = values.ToString();
+                var tokens = token.Split(" ");
+
+
+                var handler = new JwtSecurityTokenHandler();
+                var jwtSecurityToken = handler.ReadJwtToken(tokens[1]);
+                var accountId = jwtSecurityToken.Claims.First(claim => claim.Type == "Id").Value;
+                var student = await _unitOfWork._accountRepository.GetById(new Guid(accountId));
+
+                if (student == null)
+                {
+                    return NotFound("Account not recognized");
+                }
+
+                var studentCourse = await _unitOfWork._studentCourseRepository.GetById(courseId);
+
+                if (studentCourse == null)
+                {
+                    return NotFound("Student was not enroll this course!");
+                }
+
+                await _unitOfWork._studentCourseRepository.Delete(courseId);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
         }
     }
 }

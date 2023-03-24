@@ -25,7 +25,7 @@ namespace Api.Controllers {
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post(AccountDTO accountDTO) {
             if(ModelState.IsValid) {
-                var account = await _unitOfWork._accountRepository.GetAccountByEmailAndPasswordAsync(accountDTO.Email, accountDTO.Password);
+                var account = await _unitOfWork._accountRepository.GetAccountByEmailAndPassword(accountDTO.Email, accountDTO.Password);
                 if(account != null) {
                     try {
                         return Ok(_jwtHandler.GenerateJwtToken(account));
