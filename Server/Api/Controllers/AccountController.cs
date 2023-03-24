@@ -83,7 +83,26 @@ namespace Api.Controllers
         {
             try
             {
-                
+                Request.Headers.TryGetValue("Authorization", out var values);
+                var accountId = _jwtHandler.GetAccountIdFromJwt(values);
+                var account = await _unitOfWork._accountRepository.GetByIdAsync(new Guid(accountId));
+                if(account == null) 
+                { 
+                    return NotFound("Account not found");
+                }
+
+                var checkpassword = _unitOfWork._accountRepository.GetAccountByEmailAndPasswordAsync(account.Email, changePasswordDTO.OldPassword);
+                if(changePasswordDTO == null)
+                {
+                    return BadRequest("Wrong password!");
+                }
+                if(changePasswordDTO.NewPassword.Equals(changePasswordDTO.NewPasswordConfirmation))
+                {
+                    account.Password = BCrypt.Net.BCrypt.HashPassword(changePasswordDTO.NewPassword);
+                    await _unitOfWork._accountRepository.UpdateAsync(account);
+                    return Ok("Your password has changed!")
+                }
+                return BadRequest("Password confirmation not matched");
             }
             catch (Exception e)
             {

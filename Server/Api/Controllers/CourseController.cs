@@ -94,7 +94,7 @@ namespace Api.Controllers
 
                 if (student == null)
                 {
-                    return NotFound("Account not recognized");
+                    return NotFound("User associated with this account is not found");
                 }
 
                 var studentCourse = await _unitOfWork._studentCourseRepository.GetByIdAsync(courseId);

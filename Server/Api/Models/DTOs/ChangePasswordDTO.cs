@@ -5,9 +5,11 @@ namespace Api.Models.DTOs
     public class ChangePasswordDTO
     {
         [Required]
-        private string OldPassord { get; set; }
+        public string OldPassword { get; set; }
         [Required]
         public string NewPassword { get; set; }
+        [Required]
+        public string NewPasswordConfirmation { get; set; }
 
     }
 }
