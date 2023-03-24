@@ -3,6 +3,7 @@ using CoreLayer.Entities;
 using SqlKata;
 using BC = BCrypt.Net.BCrypt;
 using SqlKata.Execution;
+using CoreLayer.Enums;
 
 namespace InfrastructureLayer.Repositories
 {
@@ -45,9 +46,15 @@ namespace InfrastructureLayer.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<int> UpdateAsync(Account entity)
+        public async Task<int> UpdateAsync(Account entity)
         {
-            throw new NotImplementedException();
+            return await _queryFactory.Query(Table.ACCOUNTS_TABLE).Where(Table.ACCOUNTS_TABLE_ACCOUNTID, "=", entity.AccountId).UpdateAsync(new
+            {
+                Email = entity.Email,
+                Password = entity.Password,
+                Status = entity.Status,
+                Role = entity.Role
+            });
         }
 
         public Task<int> DeleteAsync(Guid id)

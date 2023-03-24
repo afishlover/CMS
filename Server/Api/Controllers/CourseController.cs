@@ -60,12 +60,10 @@ namespace Api.Controllers
                     return NotFound("Account not recognized");
                 }
 
-                var teacher = await _unitOfWork._teacherRepository.GetTeacherByUserIdAsync(account.AccountId);
+                var user = await _unitOfWork._userRepository.GetUserByAccountIdAsync(account.AccountId);
 
-                if (teacher == null)
-                {
-                    return NotFound("This not have a profile");
-                }
+                var teacher = await _unitOfWork._teacherRepository.GetTeacherByUserIdAsync(user.UserId);
+
 
                 var courses = await _unitOfWork._courseRepository.GetAllAsync();
                 var teacherCourses = courses.Where(c => c.TeacherId.Equals(teacher.TeacherId)).Select(_ => _mapper.Map<Course, TeacherCourseDTO>(_));

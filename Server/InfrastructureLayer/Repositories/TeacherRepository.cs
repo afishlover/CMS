@@ -40,6 +40,6 @@ public class TeacherRepository : ITeacherRepository
 
     public async Task<Teacher?> GetTeacherByUserIdAsync(Guid id)
     {
-        return await _queryFactory.Query(Table.TEACHER_TABLE).Where(Table.TEACHER_TABLE_ACCOUNTID, "=", id).FirstOrDefaultAsync();
+        return await _queryFactory.Query(Table.TEACHER_TABLE).Where(Table.TEACHER_TABLE_USERID, "=", id).FirstOrDefaultAsync<Teacher>();
     }
 }
