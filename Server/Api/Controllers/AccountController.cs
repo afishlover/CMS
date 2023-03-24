@@ -17,10 +17,11 @@ namespace Api.Controllers
         private readonly IJwtHandler _jwtHandler;
 
 
-        public AccountController(IUnitOfWork unitOfWork, ISendMailService sendMailService,)
+        public AccountController(IUnitOfWork unitOfWork, ISendMailService sendMailService, IJwtHandler jwtHandler)
         {
             _unitOfWork = unitOfWork;
             _sendMailService = sendMailService;
+            _jwtHandler = jwtHandler;
         }
 
         [HttpPost]
@@ -100,7 +101,7 @@ namespace Api.Controllers
                 {
                     account.Password = BCrypt.Net.BCrypt.HashPassword(changePasswordDTO.NewPassword);
                     await _unitOfWork._accountRepository.UpdateAsync(account);
-                    return Ok("Your password has changed!")
+                    return Ok("Your password has changed!");
                 }
                 return BadRequest("Password confirmation not matched");
             }
