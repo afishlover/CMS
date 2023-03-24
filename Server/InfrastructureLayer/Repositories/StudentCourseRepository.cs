@@ -11,9 +11,9 @@ public class StudentCourseRepository : IStudentCourseRepository
     {
         _queryFactory = queryFactory;
     }
-    public Task<StudentCourse?> GetById(Guid id)
+    public async Task<StudentCourse?> GetById(Guid id)
     {
-        throw new NotImplementedException();
+        return await _queryFactory.Query(Table.STUDENTCOURSES_TABLE).Where(Table.STUDENTCOURSES_TABLE_COURSEID, "=", id).FirstOrDefaultAsync<StudentCourse>();
     }
 
     public async Task<IEnumerable<StudentCourse>> GetAll()
@@ -21,24 +21,23 @@ public class StudentCourseRepository : IStudentCourseRepository
         return await _queryFactory.Query(Table.STUDENTCOURSES_TABLE).GetAsync<StudentCourse>();
     }
 
-    public Task Add(StudentCourse entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task Update(StudentCourse entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task Delete(Guid id)
-    {
-        _queryFactory.Query(Table.STUDENTCOURSES_TABLE).Where(Table.STUDENTCOURSES_TABLE_COURSEID, "=", id).AsDelete();
-        return Task.CompletedTask;
-    }
-
     public async Task<IEnumerable<StudentCourse>> GetByStudentId(Guid studentId)
     {
         return await _queryFactory.Query(Table.STUDENTCOURSES_TABLE).Where(Table.STUDENTCOURSES_TABLE_STUDENTID, "=", studentId).GetAsync<StudentCourse>();
+    }
+
+    public Task<int> Add(StudentCourse entity)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<int> Update(StudentCourse entity)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<int> Delete(Guid id)
+    {
+        return await _queryFactory.Query(Table.STUDENTCOURSES_TABLE).Where(Table.STUDENTCOURSES_TABLE_COURSEID, "=", id).DeleteAsync();
     }
 }

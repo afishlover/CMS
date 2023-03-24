@@ -21,17 +21,17 @@ public class CategoryRepository : ICategoryRepository
         return await _queryFactory.Query(Table.CATEGORIES_TABLE).GetAsync<Category>();
     }
 
-    public Task Add(Category entity)
+    public Task<int> Add(Category entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task Update(Category entity)
+    public Task<int> Update(Category entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task Delete(Guid id)
+    public Task<int> Delete(Guid id)
     {
         throw new NotImplementedException();
     }

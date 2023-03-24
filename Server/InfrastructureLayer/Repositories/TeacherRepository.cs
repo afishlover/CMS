@@ -23,17 +23,17 @@ public class TeacherRepository : ITeacherRepository
         return await _queryFactory.Query(Table.TEACHER_TABLE).GetAsync<Teacher>();
     }
 
-    public Task Add(Teacher entity)
+    public Task<int> Add(Teacher entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task Update(Teacher entity)
+    public Task<int> Update(Teacher entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task Delete(Guid id)
+    public Task<int> Delete(Guid id)
     {
         throw new NotImplementedException();
     }

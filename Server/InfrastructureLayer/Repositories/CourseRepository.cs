@@ -22,17 +22,17 @@ public class CourseRepository : ICourseRepository
         return await _queryFactory.Query(Table.COURSES_TABLE).GetAsync<Course>();
     }
 
-    public Task Add(Course entity)
+    public Task<int> Add(Course entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task Update(Course entity)
+    public Task<int> Update(Course entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task Delete(Guid id)
+    public Task<int> Delete(Guid id)
     {
         throw new NotImplementedException();
     }

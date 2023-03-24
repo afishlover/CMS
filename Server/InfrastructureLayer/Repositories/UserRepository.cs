@@ -23,17 +23,17 @@ namespace InfrastructureLayer.Repositories
             return await _queryFactory.Query(Table.USERS_TABLE).GetAsync<User>();
         }
 
-        public Task Add(User entity)
+        public Task<int> Add(User entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task Update(User entity)
+        public Task<int> Update(User entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task Delete(Guid id)
+        public Task<int> Delete(Guid id)
         {
             throw new NotImplementedException();
         }

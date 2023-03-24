@@ -79,7 +79,7 @@ namespace Api.Controllers
 
 
                 var handler = new JwtSecurityTokenHandler();
-                var jwtSecurityToken = handler.ReadJwtToken(tokens[1]);
+                var jwtSecurityToken = handler.ReadJwtToken(tokens.Count() == 1? tokens[0] : tokens[1]);
                 var accountId = jwtSecurityToken.Claims.First(claim => claim.Type == "Id").Value;
                 var student = await _unitOfWork._accountRepository.GetById(new Guid(accountId));
 

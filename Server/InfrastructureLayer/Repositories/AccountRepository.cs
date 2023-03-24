@@ -40,17 +40,17 @@ namespace InfrastructureLayer.Repositories
             return await _queryFactory.Query(Table.ACCOUNTS_TABLE).GetAsync<Account>();
         }
 
-        public Task Add(Account entity)
+        public Task<int> Add(Account entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task Update(Account entity)
+        public Task<int> Update(Account entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task Delete(Guid id)
+        public Task<int> Delete(Guid id)
         {
             throw new NotImplementedException();
         }
