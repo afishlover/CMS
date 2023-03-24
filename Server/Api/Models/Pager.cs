@@ -16,10 +16,11 @@ public class Pager<T> : List<T>
     public bool hasNextPage => currentPage < totalPages;
 
     public static Pager<T> CreatePager(
-        IQueryable<T> source, int currentPage, int pageCapacity)
+        IEnumerable<T> source, int currentPage, int pageCapacity)
     {
-        var count = source.Count();
-        var items = source.Skip(
+        var enumerable = source.ToList();
+        var count = enumerable.Count;
+        var items = enumerable.Skip(
                 (currentPage - 1) * pageCapacity)
             .Take(pageCapacity).ToList();
         return new Pager<T>(items, count, currentPage, pageCapacity);
