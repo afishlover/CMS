@@ -10,5 +10,6 @@ namespace ApplicationLayer
         public IStudentCourseRepository _studentCourseRepository { get; }
         public ICategoryRepository _categoryRepository { get; }
         public ITeacherRepository _teacherRepository { get; }
+        public IStudentRepository _studentRepository { get; }
     }
 }

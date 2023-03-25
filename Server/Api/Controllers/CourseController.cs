@@ -142,9 +142,19 @@ namespace Api.Controllers
                 {
                     return Conflict("Student already enrolled this course!");
                 }
+                var user = await _unitOfWork._userRepository.GetUserByAccountIdAsync(account.AccountId);
+                
+                var student = await _unitOfWork._studentRepository.GetByUserIdAsync(user.UserId);
 
-                await _unitOfWork._studentCourseRepository.AddAsync(courseId);
-                return Ok();
+                StudentCourse _ = new()
+                {
+                    CourseId = courseId,
+                    EnrollDate = DateTime.Now,
+                    StudentId = student.StudentId
+                };
+
+                await _unitOfWork._studentCourseRepository.AddAsync(_);
+                return Ok("You have been enrolled");
             }
             catch (Exception e)
             {

@@ -35,4 +35,9 @@ public class CategoryRepository : ICategoryRepository
     {
         throw new NotImplementedException();
     }
+
+    public async Task<Category?> GetRecursiveCategoryByIdAsync(Guid id)
+    {
+        throw new NotImplementedException();
+    }
 }
