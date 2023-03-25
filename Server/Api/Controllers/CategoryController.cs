@@ -55,20 +55,20 @@ namespace Api.Controllers
             }
         }
 
-        [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetCategoryHierarchy()
-        {
-            var result = (await _unitOfWork._categoryRepository.GetAllAsync()).SelectMany(_ => _.)
-        }
+        //[HttpGet]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //public async Task<IActionResult> GetCategoryHierarchy()
+        //{
+        //    var result = (await _unitOfWork._categoryRepository.GetAllAsync()).SelectMany(_ => _.)
+        //}
 
-        async Task<IEnumerable<Category>> GetChild(Guid id)
-        {
-            var table = await _unitOfWork._categoryRepository.GetAllAsync();
-            return table.Where(x => x.CategoryId == id || x.ParentId == id)
-                        .Union(table.Where(x => x.ParentId == id).SelectMany(y => GetChild(y.CategoryId)));
-        }
+        //async Task<IEnumerable<Category>> GetChild(Guid id)
+        //{
+        //    var table = await _unitOfWork._categoryRepository.GetAllAsync();
+        //    return table.Where(x => x.CategoryId == id || x.ParentId == id)
+        //                .Union(table.Where(x => x.ParentId == id).SelectMany(y => GetChild(y.CategoryId)));
+        //}
     }
 }
 

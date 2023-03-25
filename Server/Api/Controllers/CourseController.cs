@@ -179,15 +179,27 @@ namespace Api.Controllers
             }
         }
 
-        //[HttpGet("{name}/{code}")]
-        ////[Authorize]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //public async Task<IActionResult> GetCourseByNameOrCode(string name, string code)
-        //{
-        //    var courses = await _unitOfWork._courseRepository.GetAllAsync();
-        //}
+        [HttpGet("{name}/{code}")]
+        //[Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetCourseByNameOrCode(string name = "", string code = "")
+        {
+            try
+            {
+                var courses = await _unitOfWork._courseRepository.GetAllAsync();
+                return Ok(courses
+                    .Where(c => c.CourseName.ToLower().Contains(name.ToLower()) || c.CourseCode.ToLower().Contains(code.ToLower()))
+                    .Select(_ => _mapper.Map<CourseDTO>(_))
+                    .ToList()
+                    );
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+            
+        }
 
 
         [HttpGet("{id}")]
@@ -380,21 +392,5 @@ namespace Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
         }
-        //[HttpGet("{id}")]
-        //[Authorize]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //public async Task<IActionResult> GetResourceByCourseId(Guid id)
-        //{
-        //    try
-        //    {
-
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-        //    }
-        //}
     }
 }
