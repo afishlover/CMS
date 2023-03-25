@@ -23,11 +23,11 @@ namespace Api.Controllers
             _jwtHandler = jwtHandler;
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetStudentCoursesByStudentId([FromBody] Guid? studentId)
+        public async Task<IActionResult> GetStudentCoursesByStudentId(Guid id)
         {
             Request.Headers.TryGetValue("Authorization", out var values);
             var accountId = _jwtHandler.GetAccountIdFromJwt(values);
@@ -45,7 +45,7 @@ namespace Api.Controllers
                 var categories = await _unitOfWork._categoryRepository.GetAllAsync();
                 var teachers = await _unitOfWork._teacherRepository.GetAllAsync();
                 var result = studentCourses
-                    .Where(sc => sc.StudentId.Equals(studentId))
+                    .Where(sc => sc.StudentId.Equals(id))
                     .Join(courses, sc => sc.CourseId, c => c.CourseId, (sc, c) => new { sc, c })
                     .Join(categories, scj => scj.c.CategoryId, c => c.CategoryId, (scj, c) => new { result1 = scj, c })
                     .Join(teachers, result2 => result2.result1.c.TeacherId, t => t.TeacherId, (scjcj, t) => (scjcj, t))
@@ -81,7 +81,10 @@ namespace Api.Controllers
                 var user = await _unitOfWork._userRepository.GetUserByAccountIdAsync(account.AccountId);
 
                 var teacher = await _unitOfWork._teacherRepository.GetTeacherByUserIdAsync(user.UserId);
-
+                if (teacher == null)
+                {
+                    return Forbid("Your account is lmao");
+                }
 
                 var courses = await _unitOfWork._courseRepository.GetAllAsync();
                 var teacherCourses = courses.Where(c => c.TeacherId.Equals(teacher.TeacherId)).Select(_ => _mapper.Map<Course, TeacherCourseDTO>(_));
@@ -98,12 +101,12 @@ namespace Api.Controllers
 
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UnEnrollStudentCourseById(Guid courseId)
+        public async Task<IActionResult> UnEnrollStudentCourseById(Guid id)
         {
             try
             {
@@ -116,14 +119,14 @@ namespace Api.Controllers
                     return NotFound("User associated with this account is not found");
                 }
 
-                var studentCourse = await _unitOfWork._studentCourseRepository.GetByIdAsync(courseId);
+                var studentCourse = await _unitOfWork._studentCourseRepository.GetByIdAsync(id);
 
                 if (studentCourse == null)
                 {
                     return NotFound("Student was not enroll this course!");
                 }
 
-                await _unitOfWork._studentCourseRepository.DeleteAsync(courseId);
+                await _unitOfWork._studentCourseRepository.DeleteAsync(id);
                 return Ok();
             }
             catch (Exception e)
@@ -132,12 +135,12 @@ namespace Api.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> EnrollStudentCourseById(Guid courseId)
+        public async Task<IActionResult> EnrollStudentCourseById(Guid id)
         {
             try
             {
@@ -150,7 +153,7 @@ namespace Api.Controllers
                     return NotFound("User associated with this account is not found");
                 }
 
-                var studentCourse = await _unitOfWork._studentCourseRepository.GetByIdAsync(courseId);
+                var studentCourse = await _unitOfWork._studentCourseRepository.GetByIdAsync(id);
 
                 if (studentCourse != null)
                 {
@@ -162,7 +165,7 @@ namespace Api.Controllers
 
                 StudentCourse _ = new()
                 {
-                    CourseId = courseId,
+                    CourseId = id,
                     EnrollDate = DateTime.Now,
                     StudentId = student.StudentId
                 };
@@ -259,8 +262,48 @@ namespace Api.Controllers
         //[Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateCourse(CreateCourseDTO course)
+        public async Task<IActionResult> CreateCourse([FromBody] CreateCourseDTO course)
+        {
+            try
+            {
+                Request.Headers.TryGetValue("Authorization", out var values);
+                var accountId = _jwtHandler.GetAccountIdFromJwt(values);
+                var account = await _unitOfWork._accountRepository.GetByIdAsync(new Guid(accountId));
+
+                if (account == null)
+                {
+                    return NotFound("User associated with this account is not found");
+                }
+
+                var user = await _unitOfWork._userRepository.GetUserByAccountIdAsync(account.AccountId);
+                var teacher = await _unitOfWork._teacherRepository.GetTeacherByUserIdAsync(user.UserId);
+
+                if(teacher == null)
+                {
+                    return Forbid("Your account is lmao");
+                }
+
+                var newCourse = _mapper.Map<Course>(course);
+                newCourse.CourseId = Guid.NewGuid();
+                newCourse.TeacherId = teacher.TeacherId;
+                await _unitOfWork._courseRepository.AddAsync(newCourse);
+                return Ok("Course create successfully");
+            }
+            catch(Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+        [HttpPost("{id}")]
+        //[Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteCourse(Guid id)
         {
             try
             {
@@ -275,19 +318,68 @@ namespace Api.Controllers
                 var user = await _unitOfWork._userRepository.GetUserByAccountIdAsync(account.AccountId);
                 var teacher = await _unitOfWork._teacherRepository.GetTeacherByUserIdAsync(user.UserId);
 
-                var newCourse = _mapper.Map<Course>(course);
-                newCourse.CourseId = Guid.NewGuid();
-                newCourse.TeacherId = teacher.TeacherId;
-                await _unitOfWork._courseRepository.AddAsync(newCourse);
-                return Ok("Course create successfully");
+                if (teacher == null)
+                {
+                    return Forbid("Your account is lmao");
+                }
+
+                var course = await _unitOfWork._courseRepository.GetByIdAsync(id);
+                if (course == null)
+                {
+                    return NotFound("No course with this id");
+                }
+                await _unitOfWork._studentCourseRepository.DeleteAsync(id);
+                await _unitOfWork._courseRepository.DeleteAsync(id);
+
+                return Ok("Delete course successfully");
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
         }
 
+        [HttpPost]
+        //[Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateCourse([FromBody] UpdateCourseDTO updateCourseDTO)
+        {
+            try
+            {
+                Request.Headers.TryGetValue("Authorization", out var values);
+                var accountId = _jwtHandler.GetAccountIdFromJwt(values);
+                var account = await _unitOfWork._accountRepository.GetByIdAsync(new Guid(accountId));
 
+                if (account == null)
+                {
+                    return NotFound("User associated with this account is not found");
+                }
+                var user = await _unitOfWork._userRepository.GetUserByAccountIdAsync(account.AccountId);
+                var teacher = await _unitOfWork._teacherRepository.GetTeacherByUserIdAsync(user.UserId);
+
+                if (teacher == null)
+                {
+                    return Forbid("Your account is lmao");
+                }
+
+                var course = await _unitOfWork._courseRepository.GetByIdAsync(updateCourseDTO.CourseId);
+                if (course == null)
+                {
+                    return NotFound("No course with this id");
+                }
+                var updateCourse = _mapper.Map<Course>(updateCourseDTO);
+                await _unitOfWork._courseRepository.UpdateAsync(updateCourse);
+
+                return Ok("Update course successfully");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
         //[HttpGet("{id}")]
         //[Authorize]
         //[ProducesResponseType(StatusCodes.Status200OK)]

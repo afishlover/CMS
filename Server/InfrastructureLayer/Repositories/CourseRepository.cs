@@ -1,6 +1,7 @@
 ﻿using ApplicationLayer.IRepositories;
 using CoreLayer.Entities;
 using SqlKata.Execution;
+using static Dapper.SqlMapper;
 
 namespace InfrastructureLayer.Repositories;
 
@@ -27,13 +28,22 @@ public class CourseRepository : ICourseRepository
         return await _queryFactory.Query(Table.COURSES_TABLE).InsertAsync(entity);
     }
 
-    public Task<int> UpdateAsync(Course entity)
+    public async Task<int> UpdateAsync(Course entity)
     {
-        throw new NotImplementedException();
+        return await _queryFactory.Query(Table.COURSES_TABLE).Where(Table.COURSES_TABLE_COURSEID, "=", entity.CourseId).UpdateAsync(new
+        {
+            entity.CreatorCode,
+            entity.StartDate,
+            entity.EndDate,
+            entity.Since,
+            entity.CategoryId,
+            entity.CourseCode,
+            entity.LastUpdate
+        });
     }
 
-    public Task<int> DeleteAsync(Guid id)
+    public async Task<int> DeleteAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return await _queryFactory.Query(Table.COURSES_TABLE).Where(Table.COURSES_TABLE_COURSEID, "=", id).DeleteAsync();
     }
 }
