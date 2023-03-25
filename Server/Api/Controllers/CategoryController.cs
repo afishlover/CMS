@@ -47,7 +47,7 @@ namespace Api.Controllers
             try
             {
                 var result = await _unitOfWork._categoryRepository.GetAllAsync();
-                return Ok(result.Where(r => r.Level > 0 && r.ParentId != null).Select(_ => _mapper.Map<RootCategoryDTO>(_)));
+                return Ok(result.Where(r => r.Level > 0 && r.ParentId != null && r.CategoryId.Equals(id)).Select(_ => _mapper.Map<RootCategoryDTO>(_)));
             }
             catch (Exception ex)
             {

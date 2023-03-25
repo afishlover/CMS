@@ -5,6 +5,7 @@ using AutoMapper;
 using CoreLayer.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Api.Controllers
 {
@@ -52,7 +53,7 @@ namespace Api.Controllers
                     .Select(_ =>
                         _mapper.Map<(Course, Teacher, StudentCourse), StudentCourseDTO>(
                             (_.scjcj.result1.c, _.t, _.scjcj.result1.sc)));
-                return Ok(result);
+                return Ok(JsonConvert.SerializeObject(result, Formatting.Indented));
             }
             catch (Exception e)
             {
@@ -92,7 +93,7 @@ namespace Api.Controllers
                 {
                     return StatusCode(StatusCodes.Status404NotFound);
                 }
-                return Ok(teacherCourses);
+                return Ok(JsonConvert.SerializeObject(teacherCourses, Formatting.Indented));
             }
             catch (Exception e)
             {
@@ -127,7 +128,7 @@ namespace Api.Controllers
                 }
 
                 await _unitOfWork._studentCourseRepository.DeleteAsync(id);
-                return Ok();
+                return Ok("Unenroll from course");
             }
             catch (Exception e)
             {
@@ -187,11 +188,19 @@ namespace Api.Controllers
         {
             try
             {
+                Request.Headers.TryGetValue("Authorization", out var values);
+                var accountId = _jwtHandler.GetAccountIdFromJwt(values);
+                var account = await _unitOfWork._accountRepository.GetByIdAsync(new Guid(accountId));
+
+                if (account == null)
+                {
+                    return NotFound("User associated with this account is not found");
+                }
+
                 var courses = await _unitOfWork._courseRepository.GetAllAsync();
-                return Ok(courses
+                return Ok(JsonConvert.SerializeObject(courses
                     .Where(c => c.CourseName.ToLower().Contains(name.ToLower()) || c.CourseCode.ToLower().Contains(code.ToLower()))
-                    .Select(_ => _mapper.Map<CourseDTO>(_))
-                    .ToList()
+                    .Select(_ => _mapper.Map<CourseDTO>(_)), Formatting.Indented)
                     );
             }
             catch (Exception e)
@@ -228,7 +237,7 @@ namespace Api.Controllers
 
                 var category = await _unitOfWork._categoryRepository.GetByIdAsync(course.CategoryId);
                 var result = _mapper.Map<CourseDTO>((course, category));
-                return Ok(result);
+                return Ok(JsonConvert.SerializeObject(result, Formatting.Indented));
             }
             catch (Exception e)
             {
@@ -240,6 +249,7 @@ namespace Api.Controllers
         //[Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetCourseByCategoryId(Guid id)
         {
@@ -254,15 +264,20 @@ namespace Api.Controllers
                     return NotFound("User associated with this account is not found");
                 }
 
-                var course = await _unitOfWork._courseRepository.GetByIdAsync(id);
-                if (course == null)
+                var courses = await _unitOfWork._courseRepository.GetByCategoryId(id);
+                if (courses.Count() == 0)
                 {
-                    return NotFound("Course with this id is not exist");
+                    return NoContent();
                 }
 
-                var category = await _unitOfWork._categoryRepository.GetByIdAsync(course.CategoryId);
-                var result = _mapper.Map<CourseDTO>((course, category));
-                return Ok(result);
+                var category = await _unitOfWork._categoryRepository.GetByIdAsync(id);
+
+                if (category == null)
+                {
+                    return NotFound("Category with this id is not exist");
+                }
+                var result = courses.Select(_ => _mapper.Map<CourseDTO>((_, category)));
+                return Ok(JsonConvert.SerializeObject(result, Formatting.Indented));
             }
             catch (Exception e)
             {

@@ -46,4 +46,9 @@ public class CourseRepository : ICourseRepository
     {
         return await _queryFactory.Query(Table.COURSES_TABLE).Where(Table.COURSES_TABLE_COURSEID, "=", id).DeleteAsync();
     }
+
+    public async Task<IEnumerable<Course>> GetByCategoryId(Guid id)
+    {
+        return await _queryFactory.Query(Table.COURSES_TABLE).Where(Table.COURSES_TABLE_CATEGORYID, "=", id).GetAsync<Course>();
+    }
 }
