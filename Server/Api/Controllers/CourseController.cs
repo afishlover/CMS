@@ -5,7 +5,6 @@ using AutoMapper;
 using CoreLayer.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.WebSockets;
 
 namespace Api.Controllers
 {
@@ -25,28 +24,44 @@ namespace Api.Controllers
         }
 
         [HttpPost]
-        //[Authorize]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetStudentCoursesByStudentId([FromBody] Guid? studentId)
         {
-            var studentCourses = await _unitOfWork._studentCourseRepository.GetAllAsync();
-            var courses = await _unitOfWork._courseRepository.GetAllAsync();
-            var categories = await _unitOfWork._categoryRepository.GetAllAsync();
-            var teachers = await _unitOfWork._teacherRepository.GetAllAsync();
-            var result = studentCourses
-                .Where(sc => sc.StudentId.Equals(studentId))
-                .Join(courses, sc => sc.CourseId, c => c.CourseId, (sc, c) => new { sc, c })
-                .Join(categories, scj => scj.c.CategoryId, c => c.CategoryId, (scj, c) => new { result1 = scj, c })
-                .Join(teachers, result2 => result2.result1.c.TeacherId, t => t.TeacherId, (scjcj, t) => (scjcj, t))
-                .Select(_ =>
-                    _mapper.Map<(Course, Teacher, StudentCourse), StudentCourseDTO>(
-                        (_.scjcj.result1.c, _.t, _.scjcj.result1.sc)));
-            return Ok(result);
+            Request.Headers.TryGetValue("Authorization", out var values);
+            var accountId = _jwtHandler.GetAccountIdFromJwt(values);
+            var account = await _unitOfWork._accountRepository.GetByIdAsync(new Guid(accountId));
+
+            if (account == null)
+            {
+                return NotFound("Account not recognized");
+            }
+
+            try
+            {
+                var studentCourses = await _unitOfWork._studentCourseRepository.GetAllAsync();
+                var courses = await _unitOfWork._courseRepository.GetAllAsync();
+                var categories = await _unitOfWork._categoryRepository.GetAllAsync();
+                var teachers = await _unitOfWork._teacherRepository.GetAllAsync();
+                var result = studentCourses
+                    .Where(sc => sc.StudentId.Equals(studentId))
+                    .Join(courses, sc => sc.CourseId, c => c.CourseId, (sc, c) => new { sc, c })
+                    .Join(categories, scj => scj.c.CategoryId, c => c.CategoryId, (scj, c) => new { result1 = scj, c })
+                    .Join(teachers, result2 => result2.result1.c.TeacherId, t => t.TeacherId, (scjcj, t) => (scjcj, t))
+                    .Select(_ =>
+                        _mapper.Map<(Course, Teacher, StudentCourse), StudentCourseDTO>(
+                            (_.scjcj.result1.c, _.t, _.scjcj.result1.sc)));
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
         }
 
         [HttpPost]
-        //[Authorize]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -54,7 +69,6 @@ namespace Api.Controllers
         {
             try
             {
-
                 Request.Headers.TryGetValue("Authorization", out var values);
                 var accountId = _jwtHandler.GetAccountIdFromJwt(values);
                 var account = await _unitOfWork._accountRepository.GetByIdAsync(new Guid(accountId));
@@ -85,7 +99,7 @@ namespace Api.Controllers
         }
 
         [HttpDelete]
-        //[Authorize]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -119,7 +133,7 @@ namespace Api.Controllers
         }
 
         [HttpPost]
-        //[Authorize]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -164,7 +178,7 @@ namespace Api.Controllers
 
 
         [HttpGet("{id}")]
-        //[Authorize]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -189,10 +203,11 @@ namespace Api.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetResourceCourseById(Guid id)
+        public async Task<IActionResult> GetCourseByCategoryId(Guid id)
         {
             try
             {
@@ -211,5 +226,22 @@ namespace Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
         }
+
+        //[HttpGet("{id}")]
+        //[Authorize]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //public async Task<IActionResult> GetResourceByCourseId(Guid id)
+        //{
+        //    try
+        //    {
+                
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+        //    }
+        //}
     }
 }

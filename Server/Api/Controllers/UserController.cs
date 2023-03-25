@@ -3,6 +3,7 @@ using Api.Models.DTOs;
 using ApplicationLayer;
 using AutoMapper;
 using CoreLayer.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -50,6 +51,16 @@ namespace Api.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
+        }
+
+        //for user 
+        [HttpPost]
+        [Authorize(Roles = "Student, Teacher")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetUserInfoByAccountId(Guid id)
+        {
+
         }
     }
 }
