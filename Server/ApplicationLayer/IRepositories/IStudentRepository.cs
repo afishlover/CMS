@@ -9,5 +9,6 @@ namespace ApplicationLayer.IRepositories
 {
     public interface IStudentRepository : IGenericRepository<Student>
     {
+        public Task<Student?> GetByUserIdAsync(Guid id);
     }
 }

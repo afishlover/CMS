@@ -78,6 +78,7 @@ builder.Services.AddOnion(builder.Configuration["ConnectionStrings:CMS"]);
 builder.Services.AddOptions (); 
 builder.Services.Configure<MailSetting>(builder.Configuration.GetSection("MailSetting"));  
 builder.Services.AddScoped<IJwtHandler, JwtHandler>();
+builder.Services.AddSingleton<IFileHandler, FileHandler>();
 builder.Services.AddTransient<ISendMailService, SendMailService>();
 
 //authentication scheme

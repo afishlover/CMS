@@ -1,11 +1,9 @@
-namespace CoreLayer.Entities
+﻿namespace Api.Models.DTOs
 {
-    public class Category
+    public class RootCategoryDTO
     {
         public Guid CategoryId { get; set; }
         public string CategoryName { get; set; }
         public string Description { get; set; }
-        public int Level { get; set; }
-        public Guid? ParentId { get; set; }
     }
 }
