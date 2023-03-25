@@ -22,9 +22,9 @@ public class CourseRepository : ICourseRepository
         return await _queryFactory.Query(Table.COURSES_TABLE).GetAsync<Course>();
     }
 
-    public Task<int> AddAsync(Course entity)
+    public async Task<int> AddAsync(Course entity)
     {
-        throw new NotImplementedException();
+        return await _queryFactory.Query(Table.COURSES_TABLE).InsertAsync(entity);
     }
 
     public Task<int> UpdateAsync(Course entity)
