@@ -143,7 +143,7 @@ namespace Api.Controllers
                     return Conflict("Student already enrolled this course!");
                 }
 
-                await _unitOfWork._studentCourseRepository.AddAsync(courseId);
+                await _unitOfWork._studentCourseRepository.AddAsync(studentCourse);
                 return Ok();
             }
             catch (Exception e)

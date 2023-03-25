@@ -24,6 +24,7 @@ namespace Client.Controllers
         }
 
         [HttpGet]
+        [Route("login")]
         public IActionResult Login()
         {
             var isLoggedIn = HttpContext.Session.GetString("isLoggedIn");
@@ -35,6 +36,7 @@ namespace Client.Controllers
         }
 
         [HttpPost]
+        [Route("login")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(AccountDTO accountDTO)
         {
@@ -70,6 +72,7 @@ namespace Client.Controllers
 
 
         [HttpGet]
+        [Route("/logout")]
         public IActionResult Logout()
         {
             HttpContext.Session.Remove("JWT");
@@ -80,9 +83,44 @@ namespace Client.Controllers
 
 
         [HttpGet]
+        [Authorize]
+        [Route("/me")]
         public IActionResult MyProfile()
         {
-            return View();
+			return View();
         }
-    }
+
+		[HttpGet]
+        [Route("/account/{id}")]
+		public IActionResult UserProfile(string id)
+		{
+			return View("MyProfile");
+		}
+
+		[HttpGet]
+		[Route("/changepassword")]
+		public IActionResult ChangePassword()
+		{
+			return View();
+		}
+
+		[HttpPost]
+		[Route("/changepassword")]
+		public async Task<IActionResult> ChangePassword(ChangePasswordDTO changePasswordDTO)
+		{
+            if (ModelState.IsValid)
+            {
+				string strData = JsonConvert.SerializeObject(changePasswordDTO);
+				HttpContent content = new StringContent(strData, Encoding.UTF8, "application/json");
+				HttpResponseMessage response = await _client.PostAsync(CmsApiUrl + "/account/changepassword", content);
+				if (response.IsSuccessStatusCode)
+				{
+					return RedirectToAction("Logout", "Account");
+				}
+
+				ModelState.AddModelError(string.Empty, "Invalid information");
+			}
+			return View(changePasswordDTO);
+		}
+	}
 }

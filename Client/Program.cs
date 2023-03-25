@@ -1,4 +1,5 @@
 using Client.Utils;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
