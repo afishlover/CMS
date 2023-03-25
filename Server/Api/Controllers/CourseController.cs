@@ -80,7 +80,7 @@ namespace Api.Controllers
                 }
 
 
-                var teacher = await _unitOfWork._teacherRepository.GetTeacherByUserIdAsync(teacherId);
+                var teacher = await _unitOfWork._teacherRepository.GetByUserIdAsync(teacherId);
                 if (teacher == null)
                 {
                     return Forbid("Your account is lmao");
@@ -159,7 +159,7 @@ namespace Api.Controllers
                 {
                     return Conflict("Student already enrolled this course!");
                 }
-                var user = await _unitOfWork._userRepository.GetUserByAccountIdAsync(account.AccountId);
+                var user = await _unitOfWork._userRepository.GeByAccountIdAsync(account.AccountId);
                 
                 var student = await _unitOfWork._studentRepository.GetByUserIdAsync(user.UserId);
 
@@ -305,8 +305,8 @@ namespace Api.Controllers
                     return NotFound("User associated with this account is not found");
                 }
 
-                var user = await _unitOfWork._userRepository.GetUserByAccountIdAsync(account.AccountId);
-                var teacher = await _unitOfWork._teacherRepository.GetTeacherByUserIdAsync(user.UserId);
+                var user = await _unitOfWork._userRepository.GeByAccountIdAsync(account.AccountId);
+                var teacher = await _unitOfWork._teacherRepository.GetByUserIdAsync(user.UserId);
 
                 if(teacher == null)
                 {
@@ -343,8 +343,8 @@ namespace Api.Controllers
                 {
                     return NotFound("User associated with this account is not found");
                 }
-                var user = await _unitOfWork._userRepository.GetUserByAccountIdAsync(account.AccountId);
-                var teacher = await _unitOfWork._teacherRepository.GetTeacherByUserIdAsync(user.UserId);
+                var user = await _unitOfWork._userRepository.GeByAccountIdAsync(account.AccountId);
+                var teacher = await _unitOfWork._teacherRepository.GetByUserIdAsync(user.UserId);
 
                 if (teacher == null)
                 {
@@ -386,8 +386,8 @@ namespace Api.Controllers
                 {
                     return NotFound("User associated with this account is not found");
                 }
-                var user = await _unitOfWork._userRepository.GetUserByAccountIdAsync(account.AccountId);
-                var teacher = await _unitOfWork._teacherRepository.GetTeacherByUserIdAsync(user.UserId);
+                var user = await _unitOfWork._userRepository.GeByAccountIdAsync(account.AccountId);
+                var teacher = await _unitOfWork._teacherRepository.GetByUserIdAsync(user.UserId);
 
                 if (teacher == null)
                 {
