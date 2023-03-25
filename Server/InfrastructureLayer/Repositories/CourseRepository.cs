@@ -14,7 +14,7 @@ public class CourseRepository : ICourseRepository
     }
     public Task<Course?> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return _queryFactory.Query(Table.COURSES_TABLE).Where(Table.COURSES_TABLE_COURSEID, "=", id).FirstOrDefaultAsync<Course?>();
     }
 
     public async Task<IEnumerable<Course>> GetAllAsync()
