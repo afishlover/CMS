@@ -83,10 +83,10 @@ namespace Client.Controllers
 
 
         [HttpGet]
-        [Authorize]
         [Route("/me")]
         public IActionResult MyProfile()
         {
+
 			return View();
         }
 
