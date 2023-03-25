@@ -1,7 +1,9 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Client.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace Client.Controllers
@@ -12,11 +14,13 @@ namespace Client.Controllers
         private readonly HttpClient _client;
 
         private readonly IConfiguration _configuration;
+        private string CmsApiUrl;
 
         public AccountController(HttpClient client, IConfiguration configuration)
         {
             _client = client;
             _configuration = configuration;
+			CmsApiUrl = _configuration.GetSection("CmsApiRoot").Value;
         }
 
         [HttpGet]
@@ -38,7 +42,7 @@ namespace Client.Controllers
             {
                 string strData = JsonConvert.SerializeObject(accountDTO);
                 HttpContent content = new StringContent(strData, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await _client.PostAsync(CmsApiUrl, content);
+                HttpResponseMessage response = await _client.PostAsync(CmsApiUrl+"/token/post", content);
                 if (response.IsSuccessStatusCode)
                 {
                     // Get the token from response
@@ -74,5 +78,11 @@ namespace Client.Controllers
             return RedirectToAction("Login", "Account");
         }
 
+
+        [HttpGet]
+        public IActionResult MyProfile()
+        {
+            return View();
+        }
     }
 }
