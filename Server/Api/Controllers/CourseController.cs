@@ -66,7 +66,7 @@ namespace Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetTeacherCourses()
+        public async Task<IActionResult> GetCoursesByTeacherId(Guid teacherId)
         {
             try
             {
@@ -79,9 +79,8 @@ namespace Api.Controllers
                     return NotFound("Account not recognized");
                 }
 
-                var user = await _unitOfWork._userRepository.GetUserByAccountIdAsync(account.AccountId);
 
-                var teacher = await _unitOfWork._teacherRepository.GetTeacherByUserIdAsync(user.UserId);
+                var teacher = await _unitOfWork._teacherRepository.GetTeacherByUserIdAsync(teacherId);
                 if (teacher == null)
                 {
                     return Forbid("Your account is lmao");

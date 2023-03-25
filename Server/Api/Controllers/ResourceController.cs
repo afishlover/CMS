@@ -147,7 +147,7 @@ namespace Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateResource([FromBody] CreateResourceDTO createResourceDTO)
+        public async Task<IActionResult> CreateResource([FromBody] CreateResourceDTO createResourceDTO) //not implemented
         {
             try
             {
