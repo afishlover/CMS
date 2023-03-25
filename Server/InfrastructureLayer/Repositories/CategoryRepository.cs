@@ -13,7 +13,7 @@ public class CategoryRepository : ICategoryRepository
     }
     public Task<Category?> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return _queryFactory.Query(Table.CATEGORIES_TABLE).Where(Table.CATEGORIES_TABLE_CATEGORYID, "=", id).FirstOrDefaultAsync<Category?>();
     }
 
     public async Task<IEnumerable<Category>> GetAllAsync()
