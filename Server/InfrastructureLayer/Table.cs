@@ -20,5 +20,6 @@ namespace InfrastructureLayer {
         public readonly static string RESOURCES_TABLE = "Resources";
         public readonly static string RESOURCES_TABLE_RESOURCEID = "ResourceId";
         public readonly static string COURSES_TABLE_CATEGORYID = "CategoryId";
+        public readonly static string RESOURCES_TABLE_COURSEID = "CourseId";
     }
 }

@@ -37,6 +37,11 @@ namespace InfrastructureLayer.Repositories
             return _queryFactory.Query(Table.RESOURCES_TABLE).Where(Table.RESOURCES_TABLE_RESOURCEID, "=", id).FirstOrDefaultAsync<Resource?>();
         }
 
+        public async Task<IEnumerable<Resource>> GetResourcesByCourseId(Guid id)
+        {
+            return await _queryFactory.Query(Table.RESOURCES_TABLE).Where(Table.RESOURCES_TABLE_COURSEID, "=", id).GetAsync<Resource>();
+        }
+
         public Task<int> UpdateAsync(Resource entity)
         {
             throw new NotImplementedException();

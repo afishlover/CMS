@@ -184,8 +184,10 @@ namespace Api.Controllers
         //[Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetCourseByNameOrCode(string name = "", string code = "")
+        public async Task<IActionResult> GetCourseByNameOrCode(string? name = null, string? code = null)
         {
+            var _name = name ?? string.Empty;
+            var _code = code ?? string.Empty;
             try
             {
                 Request.Headers.TryGetValue("Authorization", out var values);
@@ -199,7 +201,7 @@ namespace Api.Controllers
 
                 var courses = await _unitOfWork._courseRepository.GetAllAsync();
                 return Ok(JsonConvert.SerializeObject(courses
-                    .Where(c => c.CourseName.ToLower().Contains(name.ToLower()) || c.CourseCode.ToLower().Contains(code.ToLower()))
+                    .Where(c => c.CourseName.ToLower().Contains(_name.ToLower()) || c.CourseCode.ToLower().Contains(_code.ToLower()))
                     .Select(_ => _mapper.Map<CourseDTO>(_)), Formatting.Indented)
                     );
             }
@@ -324,7 +326,7 @@ namespace Api.Controllers
             }
         }
 
-        [HttpPost("{id}")]
+        [HttpDelete("{id}")]
         //[Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -366,7 +368,7 @@ namespace Api.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPut]
         //[Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

@@ -11,7 +11,8 @@ namespace InfrastructureLayer
             IStudentCourseRepository studentCourseRepository,
             ICategoryRepository categoryRepository,
             ITeacherRepository teacherRepository,
-            IStudentRepository studentRepository)
+            IStudentRepository studentRepository,
+            IResourceRepository resourceRepository)
         {
             _accountRepository = accountRepository;
             _userRepository = userRepository;
@@ -20,6 +21,7 @@ namespace InfrastructureLayer
             _categoryRepository = categoryRepository;
             _teacherRepository = teacherRepository;
             _studentRepository = studentRepository;
+            _resourceRepository = resourceRepository;
         }
         public IAccountRepository _accountRepository { get; }
         public IUserRepository _userRepository { get; }
@@ -27,7 +29,7 @@ namespace InfrastructureLayer
         public IStudentCourseRepository _studentCourseRepository { get; }
         public ICategoryRepository _categoryRepository { get; }
         public ITeacherRepository _teacherRepository { get; }
-
         public IStudentRepository _studentRepository { get; }
+        public IResourceRepository _resourceRepository { get; }
     }
 }
