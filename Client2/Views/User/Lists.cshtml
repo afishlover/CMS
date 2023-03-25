@@ -1,0 +1,45 @@
+﻿@{
+    ViewData["Title"] = "User Lists";
+}
+@model IEnumerable<UserDTO>
+
+<body>
+<div>
+    <table class="table table-borderless">
+        <tr>
+            <th>Account ID</th>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Birth Date</th>
+            <th>User ID</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Phone</th>
+            <th colspan="3">Action</th>
+        </tr>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.AccountId</td>
+                <td>@user.Email</td>
+                <td>@user.Name</td>
+                <td>@(user.Birthdate ?? "None")</td>
+                <td>@user.UserId</td>
+                <td>@user.Role</td>
+                <td>@user.Status</td>
+                <td>@(user.Phone ?? "None")</td>
+                <td>
+                    <a href="#">Details</a>
+                </td>
+                <td>
+                    <a href="#">Delete</a>
+                </td>
+                <td>
+                    <a href="#">Deactivate</a>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+</body>
+</html>
