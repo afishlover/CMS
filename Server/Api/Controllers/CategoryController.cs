@@ -67,8 +67,7 @@ namespace Api.Controllers
         {
             var table = await _unitOfWork._categoryRepository.GetAllAsync();
             return table.Where(x => x.CategoryId == id || x.ParentId == id)
-                        .Union(table.Where(x => x.ParentId == id)
-                                    .SelectMany(y => GetChild(y.CategoryId)));
+                        .Union(table.Where(x => x.ParentId == id).SelectMany(y => GetChild(y.CategoryId)));
         }
     }
 }

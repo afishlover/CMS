@@ -188,7 +188,7 @@ namespace Api.Controllers
 
 
         [HttpGet("{id}")]
-        [Authorize]
+        //[Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -196,6 +196,15 @@ namespace Api.Controllers
         {
             try
             {
+                Request.Headers.TryGetValue("Authorization", out var values);
+                var accountId = _jwtHandler.GetAccountIdFromJwt(values);
+                var account = await _unitOfWork._accountRepository.GetByIdAsync(new Guid(accountId));
+
+                if (account == null)
+                {
+                    return NotFound("User associated with this account is not found");
+                }
+
                 var course = await _unitOfWork._courseRepository.GetByIdAsync(id);
                 if (course == null)
                 {
@@ -213,7 +222,7 @@ namespace Api.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize]
+        //[Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -221,6 +230,15 @@ namespace Api.Controllers
         {
             try
             {
+                Request.Headers.TryGetValue("Authorization", out var values);
+                var accountId = _jwtHandler.GetAccountIdFromJwt(values);
+                var account = await _unitOfWork._accountRepository.GetByIdAsync(new Guid(accountId));
+
+                if (account == null)
+                {
+                    return NotFound("User associated with this account is not found");
+                }
+
                 var course = await _unitOfWork._courseRepository.GetByIdAsync(id);
                 if (course == null)
                 {
@@ -237,6 +255,39 @@ namespace Api.Controllers
             }
         }
 
+        [HttpPost]
+        //[Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateCourse(CreateCourseDTO course)
+        {
+            try
+            {
+                Request.Headers.TryGetValue("Authorization", out var values);
+                var accountId = _jwtHandler.GetAccountIdFromJwt(values);
+                var account = await _unitOfWork._accountRepository.GetByIdAsync(new Guid(accountId));
+
+                if (account == null)
+                {
+                    return NotFound("User associated with this account is not found");
+                }
+                var user = await _unitOfWork._userRepository.GetUserByAccountIdAsync(account.AccountId);
+                var teacher = await _unitOfWork._teacherRepository.GetTeacherByUserIdAsync(user.UserId);
+
+                var newCourse = _mapper.Map<Course>(course);
+                newCourse.CourseId = Guid.NewGuid();
+                newCourse.TeacherId = teacher.TeacherId;
+                await _unitOfWork._courseRepository.AddAsync(newCourse);
+                return Ok("Course create successfully");
+            }
+            catch(Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+
         //[HttpGet("{id}")]
         //[Authorize]
         //[ProducesResponseType(StatusCodes.Status200OK)]
@@ -246,7 +297,7 @@ namespace Api.Controllers
         //{
         //    try
         //    {
-                
+
         //    }
         //    catch (Exception e)
         //    {
