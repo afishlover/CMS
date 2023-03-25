@@ -74,7 +74,18 @@ namespace Client.Controllers
 
 
 			//Get courses
-
+			response = await _client.GetAsync(CmsApiUrl + "/category/GetCourseByCategoryId");
+			if (response.IsSuccessStatusCode)
+			{
+				// Get the categories list from response
+				var result = await response.Content.ReadAsStringAsync();
+				List<CourseDTO> courses = JsonConvert.DeserializeObject<List<CourseDTO>>(result);
+				if (courses == null)
+				{
+					courses = new List<CourseDTO>();
+				}
+				ViewData["courses"] = courses;
+			}
 
 
 			return View();

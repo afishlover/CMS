@@ -11,10 +11,10 @@ public class CategoryRepository : ICategoryRepository
     {
         _queryFactory = queryFactory;
     }
-    public Task<Category?> GetByIdAsync(Guid id)
+    public async Task<Category?> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
-    }
+		return await _queryFactory.Query(Table.CATEGORIES_TABLE).Where(Table.CATEGORIES_TABLE_CATEGORYID, "=", id).FirstOrDefaultAsync<Category>();
+	}
 
     public async Task<IEnumerable<Category>> GetAllAsync()
     {

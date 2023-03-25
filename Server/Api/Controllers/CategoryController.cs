@@ -47,7 +47,7 @@ namespace Api.Controllers
             try
             {
                 var result = await _unitOfWork._categoryRepository.GetAllAsync();
-                return Ok(result.Where(r => r.Level > 0 && r.ParentId != null).Select(_ => _mapper.Map<RootCategoryDTO>(_)));
+                return Ok(result.Where(r => r.Level > 0 && r.ParentId == id).Select(_ => _mapper.Map<RootCategoryDTO>(_)));
             }
             catch (Exception ex)
             {
@@ -55,21 +55,39 @@ namespace Api.Controllers
             }
         }
 
-        //[HttpGet]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //public async Task<IActionResult> GetCategoryHierarchy()
-        //{
-        //    var result = (await _unitOfWork._categoryRepository.GetAllAsync()).SelectMany(_ => _.)
-        //}
+		[HttpGet]
+		//[Authorize]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+		public async Task<IActionResult> GetCategoryById(Guid id)
+		{
+			try
+			{
+				var category = await _unitOfWork._categoryRepository.GetByIdAsync(id);
+                var result = _mapper.Map<RootCategoryDTO>(category);
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
 
-        //async Task<IEnumerable<Category>> GetChild(Guid id)
-        //{
-        //    var table = await _unitOfWork._categoryRepository.GetAllAsync();
-        //    return table.Where(x => x.CategoryId == id || x.ParentId == id)
-        //                .Union(table.Where(x => x.ParentId == id)
-        //                            .SelectMany(y => GetChild(y.CategoryId)));
-        //}
-    }
+		//[HttpGet]
+		//[ProducesResponseType(StatusCodes.Status200OK)]
+		//[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+		//public async Task<IActionResult> GetCategoryHierarchy()
+		//{
+		//    var result = (await _unitOfWork._categoryRepository.GetAllAsync()).SelectMany(_ => _.)
+		//}
+
+		//async Task<IEnumerable<Category>> GetChild(Guid id)
+		//{
+		//    var table = await _unitOfWork._categoryRepository.GetAllAsync();
+		//    return table.Where(x => x.CategoryId == id || x.ParentId == id)
+		//                .Union(table.Where(x => x.ParentId == id)
+		//                            .SelectMany(y => GetChild(y.CategoryId)));
+		//}
+	}
 }
 
