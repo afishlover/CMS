@@ -2,6 +2,7 @@
 using Api.Models.DTOs;
 using ApplicationLayer;
 using AutoMapper;
+using CoreLayer.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,12 +17,14 @@ namespace Api.Controllers
         private readonly IMapper _mapper;
         private readonly IJwtHandler _jwtHandler;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IFileHandler _fileHandler;
 
-        public ResourceController(IUnitOfWork unitOfWork, IMapper mapper, IJwtHandler jwtHandler)
+        public ResourceController(IUnitOfWork unitOfWork, IMapper mapper, IJwtHandler jwtHandler, IFileHandler fileHandler)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _jwtHandler = jwtHandler;
+            _fileHandler = fileHandler;
         }
 
         [HttpGet("{id}")]
@@ -59,6 +62,7 @@ namespace Api.Controllers
         //[Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetResourcesByCourseId(Guid id)
         {
@@ -88,6 +92,104 @@ namespace Api.Controllers
                 }
 
                 return Ok(JsonConvert.SerializeObject(resources.Select(_ => _mapper.Map<ResourceDTO>(_)), Formatting.Indented));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        //[Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteResource(Guid id)
+        {
+            try
+            {
+                Request.Headers.TryGetValue("Authorization", out var values);
+                var accountId = _jwtHandler.GetAccountIdFromJwt(values);
+                var account = await _unitOfWork._accountRepository.GetByIdAsync(new Guid(accountId));
+
+                if (account == null)
+                {
+                    return NotFound("User associated with this account is not found");
+                }
+                var user = await _unitOfWork._userRepository.GetUserByAccountIdAsync(account.AccountId);
+                var teacher = await _unitOfWork._teacherRepository.GetTeacherByUserIdAsync(user.UserId);
+
+                if (teacher == null)
+                {
+                    return Forbid("Your account is lmao");
+                }
+
+                var resource = await _unitOfWork._resourceRepository.GetByIdAsync(id);
+                if (resource == null)
+                {
+                    return NotFound("No resource found with this id");
+                }
+
+                await _unitOfWork._resourceRepository.DeleteAsync(id);
+
+                return Ok("Deleted resource");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        //[Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateResource([FromBody] CreateResourceDTO createResourceDTO)
+        {
+            try
+            {
+                Request.Headers.TryGetValue("Authorization", out var values);
+                var accountId = _jwtHandler.GetAccountIdFromJwt(values);
+                var account = await _unitOfWork._accountRepository.GetByIdAsync(new Guid(accountId));
+
+                if (account == null)
+                {
+                    return NotFound("User associated with this account is not found");
+                }
+                var user = await _unitOfWork._userRepository.GetUserByAccountIdAsync(account.AccountId);
+                var teacher = await _unitOfWork._teacherRepository.GetTeacherByUserIdAsync(user.UserId);
+
+                if (teacher == null)
+                {
+                    return Forbid("Your account is lmao");
+                }
+
+                var resource = _mapper.Map<Resource>(createResourceDTO);
+
+                var course =  await _unitOfWork._courseRepository.GetByIdAsync(resource.CourseId);
+                if (course == null)
+                {
+                    return NotFound("No course with this id");
+                }
+
+                resource.ResourceId = Guid.NewGuid();
+                resource.CreatorId = teacher.TeacherId;
+
+                if (resource.ResourceType != 0)
+                {
+                    var formCollection = await Request.ReadFormAsync();
+                    var file = formCollection.Files[0];
+                    var folderPath = $"Resources/{course.CategoryId}/{course.CourseId}";
+                    var savePath = Path.Combine(Directory.GetCurrentDirectory(), folderPath);
+                    var fileName = $"{resource.ResourceId}";
+                    await _fileHandler.Upload(file, savePath, fileName);
+                    resource.FileURL = Path.Combine(savePath, fileName);
+                }
+                await _unitOfWork._resourceRepository.AddAsync(resource);
+                return Ok("Resource created");
             }
             catch (Exception ex)
             {

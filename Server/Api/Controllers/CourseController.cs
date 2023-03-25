@@ -358,6 +358,7 @@ namespace Api.Controllers
                     return NotFound("No course with this id");
                 }
                 await _unitOfWork._studentCourseRepository.DeleteAsync(id);
+                await _unitOfWork._resourceRepository.DeleteByCourseIdAsync(id);
                 await _unitOfWork._courseRepository.DeleteAsync(id);
 
                 return Ok("Delete course successfully");

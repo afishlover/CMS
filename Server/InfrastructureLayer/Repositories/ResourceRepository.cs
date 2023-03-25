@@ -22,9 +22,14 @@ namespace InfrastructureLayer.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<int> DeleteAsync(Guid id)
+        public async Task<int> DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            return await _queryFactory.Query(Table.RESOURCES_TABLE).Where(Table.RESOURCES_TABLE_RESOURCEID, "=", id).DeleteAsync();
+        }
+
+        public async Task<int> DeleteByCourseIdAsync(Guid id)
+        {
+            return await _queryFactory.Query(Table.RESOURCES_TABLE).Where(Table.RESOURCES_TABLE_COURSEID, "=", id).DeleteAsync();
         }
 
         public Task<IEnumerable<Resource>> GetAllAsync()
