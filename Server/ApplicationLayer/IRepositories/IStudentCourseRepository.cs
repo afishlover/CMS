@@ -6,4 +6,5 @@ public interface IStudentCourseRepository : IGenericRepository<StudentCourse>
 {
     public Task<IEnumerable<StudentCourse>> GetByStudentId(Guid studentId);
     public Task<IEnumerable<StudentCourse>> GetByCourseIdAsync(Guid courseId);
+    public Task<StudentCourse?> GetByCourseAndStudentIdAsync(Guid courseId, Guid studentId);
 }

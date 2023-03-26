@@ -46,4 +46,9 @@ public class StudentCourseRepository : IStudentCourseRepository
         return await _queryFactory.Query(Table.STUDENTCOURSES_TABLE).Where(Table.STUDENTCOURSES_TABLE_COURSEID, "=", courseId).GetAsync<StudentCourse>();
 
     }
+
+    public async Task<StudentCourse?> GetByCourseAndStudentIdAsync(Guid courseId, Guid studentId)
+    {
+        return await _queryFactory.Query(Table.STUDENTCOURSES_TABLE).Where(Table.STUDENTCOURSES_TABLE_COURSEID, "=", courseId).Where(Table.STUDENTCOURSES_TABLE_STUDENTID, "=", studentId).FirstOrDefaultAsync<StudentCourse?>();
+    }
 }
