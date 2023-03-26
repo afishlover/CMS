@@ -92,7 +92,7 @@ namespace Client.Controllers
 			{
 				return RedirectToAction("Login", "Account");
 			}
-			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.ToString());
+			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.ToString());
 
 			var role = HttpContext.Session.GetString("Role");
 			ViewData["role"] = role;
@@ -110,7 +110,7 @@ namespace Client.Controllers
 			{
 				return RedirectToAction("Login", "Account");
 			}
-			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.ToString());
+			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.ToString());
 
 			var role = HttpContext.Session.GetString("Role");
 			ViewData["role"] = role;
@@ -128,7 +128,7 @@ namespace Client.Controllers
 			{
 				return RedirectToAction("Login", "Account");
 			}
-			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.ToString());
+			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.ToString());
 
 			var role = HttpContext.Session.GetString("Role");
 			ViewData["role"] = role;
@@ -146,7 +146,7 @@ namespace Client.Controllers
 			{
 				return RedirectToAction("Login", "Account");
 			}
-			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.ToString());
+			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.ToString());
 
 			var role = HttpContext.Session.GetString("Role");
 			ViewData["role"] = role;

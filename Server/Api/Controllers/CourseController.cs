@@ -61,7 +61,7 @@ namespace Api.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpGet]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -92,7 +92,7 @@ namespace Api.Controllers
                 {
                     return StatusCode(StatusCodes.Status404NotFound);
                 }
-                return Ok(JsonConvert.SerializeObject(teacherCourses, Formatting.Indented));
+                return Ok(teacherCourses);
             }
             catch (Exception e)
             {

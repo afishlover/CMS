@@ -2,6 +2,7 @@
 
 public class TeacherCourseDTO
 {
+    public Guid CourseId { get; set; }
     public string CourseName { get; set; }
     public string CourseCode { get; set; }
     public string? StartDate { get; set; }
