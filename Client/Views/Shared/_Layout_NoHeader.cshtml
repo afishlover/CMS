@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"] - Client</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/Client.styles.css" asp-append-version="true" />
+	<!--begin::Fonts-->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
+	<!--end::Fonts-->
+	<!--begin::Global Stylesheets Bundle(used by all pages)-->
+	<link href="~/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
+	<link href="~/css/style.bundle.css" rel="stylesheet" type="text/css" />
+	<!--end::Global Stylesheets Bundle-->
+</head>
+<body>
+	<!--begin::Main-->
+	<!--begin::Root-->
+	<div class="d-flex flex-column flex-root">
+		<!--begin::Page-->
+		<div class="page d-flex flex-row flex-column-fluid">
+			<!--begin::Wrapper-->
+			<div class="wrapper d-flex flex-column flex-row-fluid" id="kt_wrapper">
+
+				@RenderBody()
+
+			</div>
+			<!--end::Wrapper-->
+		</div>
+		<!--end::Page-->
+	</div>
+	<!--end::Root-->
+	<!--end::Main-->
+	<!--begin::Global Javascript Bundle(used by all pages)-->
+	<script src="~/plugins/global/plugins.bundle.js"></script>
+	<script src="~/js/scripts.bundle.js"></script>
+	<!--end::Global Javascript Bundle-->
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+	@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

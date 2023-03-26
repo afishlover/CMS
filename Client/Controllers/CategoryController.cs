@@ -31,7 +31,7 @@ namespace Client.Controllers
 			}
 			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.ToString());
 
-
+			//Get root cates
 			HttpResponseMessage response = await _client.GetAsync(CmsApiUrl + "/category/GetAllRootCategories");
 			List<RootCategoryDTO> categories = new List<RootCategoryDTO>();
 			if (response.IsSuccessStatusCode)
@@ -44,6 +44,8 @@ namespace Client.Controllers
 			{
 				ViewData["categories"] = categories;
 			}
+
+
 			return View();
 		}
 

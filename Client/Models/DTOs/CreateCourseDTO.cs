@@ -1,6 +1,4 @@
-﻿using CoreLayer.Entities;
-
-namespace Api.Models.DTOs
+﻿namespace Client.Models.DTOs
 {
     public class CreateCourseDTO
     {

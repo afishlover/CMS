@@ -316,6 +316,9 @@ namespace Api.Controllers
                 var newCourse = _mapper.Map<Course>(course);
                 newCourse.CourseId = Guid.NewGuid();
                 newCourse.TeacherId = teacher.TeacherId;
+                newCourse.Since = DateTime.Now;
+                newCourse.LastUpdate = DateTime.Now;
+                newCourse.CreatorCode = teacher.TeacherCode;
                 await _unitOfWork._courseRepository.AddAsync(newCourse);
                 return Ok("Course create successfully");
             }

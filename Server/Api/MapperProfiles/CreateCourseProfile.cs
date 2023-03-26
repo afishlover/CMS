@@ -8,7 +8,9 @@ namespace Api.MapperProfiles
     {
         public CreateCourseProfile()
         {
-            CreateMap<CreateCourseDTO, Course>();
+            CreateMap<CreateCourseDTO, Course>()
+				.ForMember(c => c.StartDate, m => m.MapFrom(cc => DateTime.Parse(cc.StartDate)))
+				.ForMember(c => c.EndDate, m => m.MapFrom(cc => DateTime.Parse(cc.EndDate)));
         }
     }
 }
