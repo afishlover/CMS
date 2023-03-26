@@ -45,6 +45,20 @@ namespace Client.Controllers
 				ViewData["categories"] = categories;
 			}
 
+			//Get all cates
+			response = await _client.GetAsync(CmsApiUrl + "/category/GetAllCategories");
+			List<RootCategoryDTO> allCategories = new List<RootCategoryDTO>();
+			if (response.IsSuccessStatusCode)
+			{
+				// Get the categories list from response
+				var result = await response.Content.ReadAsStringAsync();
+				allCategories = JsonConvert.DeserializeObject<List<RootCategoryDTO>>(result);
+			}
+			if (allCategories != null)
+			{
+				ViewData["allCategories"] = allCategories;
+			}
+
 
 			return View();
 		}
@@ -105,6 +119,20 @@ namespace Client.Controllers
 					courses = new List<CourseDTO>();
 				}
 				ViewData["courses"] = courses;
+			}
+
+			//Get all cates
+			response = await _client.GetAsync(CmsApiUrl + "/category/GetAllCategories");
+			List<RootCategoryDTO> allCategories = new List<RootCategoryDTO>();
+			if (response.IsSuccessStatusCode)
+			{
+				// Get the categories list from response
+				var result = await response.Content.ReadAsStringAsync();
+				allCategories = JsonConvert.DeserializeObject<List<RootCategoryDTO>>(result);
+			}
+			if (allCategories != null)
+			{
+				ViewData["allCategories"] = allCategories;
 			}
 
 

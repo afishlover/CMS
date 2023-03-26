@@ -72,7 +72,7 @@ namespace Client.Controllers
 				//get all enrolled courses
 				string studentId = HttpContext.Session.GetString("AccountId");
 				HttpContent content = new StringContent(studentId, Encoding.UTF8, "application/json");
-				HttpResponseMessage response = await _client.PostAsync(CmsApiUrl + "/course/GetStudentCoursesByStudentId", content);
+				HttpResponseMessage response = await _client.PostAsync(CmsApiUrl + "/course/GetStudentCoursesByStudentId/"+ studentId, content);
 				if (response.IsSuccessStatusCode)
 				{
 					var result = await response.Content.ReadAsStringAsync();
