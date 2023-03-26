@@ -234,7 +234,8 @@ namespace Client.Controllers
 			if (role.Equals("Student"))
 			{
 				ViewData["enrolled"] = "false";
-				response = await _client.GetAsync(CmsApiUrl + "/course/CheckStudentEnrollCourse/" + id);
+				HttpContent content = new StringContent(id, Encoding.UTF8, "application/json");
+				response = await _client.PostAsync(CmsApiUrl + "/course/CheckStudentEnrollCourse/" + id, content);
 				if (response.IsSuccessStatusCode)
 				{
 					var result = await response.Content.ReadAsStringAsync();
@@ -285,7 +286,7 @@ namespace Client.Controllers
 			ViewData["role"] = role;
 
 			HttpContent content = new StringContent(id, Encoding.UTF8, "application/json");
-			HttpResponseMessage response = await _client.PostAsync(CmsApiUrl + "/course/EnrollStudentCourseById", content);
+			HttpResponseMessage response = await _client.PostAsync(CmsApiUrl + "/course/EnrollStudentCourseById/"+id, content);
 			return RedirectToAction("Detail", "Course", new { id = id });
 		}
 

@@ -72,7 +72,7 @@
 										//check enrolled
 										if (enrolled.Equals("true"))
 										{
-											<form asp-controller="Course" asp-action="Enroll" method="POST">
+											<form asp-controller="Course" asp-action="Unenroll" method="POST">
 												<input type="hidden" name="id" value=@course.CourseId />
 												<div class="d-flex mb-4">
 													<button type="submit" class="btn btn-sm btn-primary me-3">Unenroll</button>
