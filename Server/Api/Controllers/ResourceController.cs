@@ -164,7 +164,7 @@ namespace Api.Controllers
 
                 if (teacher == null)
                 {
-                    return Forbid("Your account is lmao");
+                    return Forbid();
                 }
 
                 var resource = _mapper.Map<Resource>(createResourceDTO);

@@ -15,9 +15,8 @@ namespace CoreLayer.Entities
         public string CoverPicture { get; set; }
         public string ProfilePicture { get; set; }
         public Guid AccountId { get; set; }
-        public Account Account { get; set; }
         public string GetFullName() {
-            return $"{this.LastName} {this.MiddleName} {this.FirstName}";
+            return $"{LastName} {MiddleName} {FirstName}";
         }
     }
 }
