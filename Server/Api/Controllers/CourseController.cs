@@ -238,7 +238,7 @@ namespace Api.Controllers
 
                 var category = await _unitOfWork._categoryRepository.GetByIdAsync(course.CategoryId);
                 var result = _mapper.Map<CourseDTO>((course, category));
-                return Ok(JsonConvert.SerializeObject(result, Formatting.Indented));
+                return Ok(result);
             }
             catch (Exception e)
             {
