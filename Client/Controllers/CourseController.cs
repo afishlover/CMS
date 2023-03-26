@@ -66,9 +66,23 @@ namespace Client.Controllers
 					ViewData["courses"] = courses;
 				}
 
-			} else
+			}
+			else
 			{
 				//get all enrolled courses
+				string studentId = HttpContext.Session.GetString("AccountId");
+				HttpContent content = new StringContent(studentId, Encoding.UTF8, "application/json");
+				HttpResponseMessage response = await _client.PostAsync(CmsApiUrl + "/course/GetStudentCoursesByStudentId", content);
+				if (response.IsSuccessStatusCode)
+				{
+					var result = await response.Content.ReadAsStringAsync();
+					List<StudentCourseDTO> courses = JsonConvert.DeserializeObject<List<StudentCourseDTO>>(result);
+					if (courses == null)
+					{
+						courses = new List<StudentCourseDTO>();
+					}
+					ViewData["studentCourses"] = courses;
+				}
 			}
 
 			return View();
@@ -108,7 +122,7 @@ namespace Client.Controllers
 			HttpResponseMessage response = await _client.PostAsync(CmsApiUrl + "/course/CreateCourse", content);
 			if (response.IsSuccessStatusCode)
 			{
-				return RedirectToAction("Detail", "Category", new { id = CategoryId});
+				return RedirectToAction("Detail", "Category", new { id = CategoryId });
 			}
 
 			return RedirectToAction("Index", "Home");
@@ -202,7 +216,7 @@ namespace Client.Controllers
 			}
 
 
-			//Get courses
+			//Get resources
 			//response = await _client.GetAsync(CmsApiUrl + "/course/GetCourseByCategoryId/" + id);
 			//if (response.IsSuccessStatusCode)
 			//{
@@ -215,6 +229,21 @@ namespace Client.Controllers
 			//	}
 			//	ViewData["courses"] = courses;
 			//}
+
+			//check enrolled
+			if (role.Equals("Student"))
+			{
+				response = await _client.GetAsync(CmsApiUrl + "/course/CheckStudentEnrollCourse/" + id);
+				if (response.IsSuccessStatusCode)
+				{
+					var result = await response.Content.ReadAsStringAsync();
+					if (JsonConvert.DeserializeObject(result).Equals("Enrolled"))
+					{
+						ViewData["enrolled"] = true;
+					}
+				}
+				ViewData["enrolled"] = false;
+			}
 
 
 			return View();

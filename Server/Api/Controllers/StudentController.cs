@@ -49,7 +49,7 @@ namespace Api.Controllers
                     return NoContent();
                 }
                 var result = studentCourse.Join(students, sc => sc.StudentId, s => s.StudentId, (sc, c) => _mapper.Map<StudentDTO>((sc, c, user)));
-                return Ok(JsonConvert.SerializeObject(result, Formatting.Indented));
+                return Ok(result);
             }
             catch (Exception e)
             {

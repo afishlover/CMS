@@ -210,17 +210,17 @@ namespace Api.Controllers
                 var accountId = _jwtHandler.GetAccountIdFromJwt(values);
                 var account = await _unitOfWork._accountRepository.GetByIdAsync(new Guid(accountId));
 
-                if (account == null)
-                {
-                    return NotFound("User associated with this account is not found");
-                }
-                var user = await _unitOfWork._userRepository.GetByAccountIdAsync(account.AccountId);
-                var teacher = await _unitOfWork._teacherRepository.GetByUserIdAsync(user.UserId);
+        //        if (account == null)
+        //        {
+        //            return NotFound("User associated with this account is not found");
+        //        }
+        //        var user = await _unitOfWork._userRepository.GetByAccountIdAsync(account.AccountId);
+        //        var teacher = await _unitOfWork._teacherRepository.GetByUserIdAsync(user.UserId);
 
-                if (teacher == null)
-                {
-                    return Forbid();
-                }
+                //if (teacher == null)
+                //{
+                //    return Forbid();
+                //}
                 var resource = await _unitOfWork._resourceRepository.GetByIdAsync(id);
                 if (resource == null)
                 {
