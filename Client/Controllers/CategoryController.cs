@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 
 namespace Client.Controllers
 {
@@ -23,6 +24,14 @@ namespace Client.Controllers
 		[Route("/categories")]
 		public async Task<IActionResult> Index()
 		{
+			HttpContext.Request.Headers.TryGetValue("Authorization", out var token);
+			if (string.IsNullOrEmpty(token))
+			{
+				return RedirectToAction("Login", "Account");
+			}
+			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.ToString());
+
+
 			HttpResponseMessage response = await _client.GetAsync(CmsApiUrl + "/category/GetAllRootCategories");
 			List<RootCategoryDTO> categories = new List<RootCategoryDTO>();
 			if (response.IsSuccessStatusCode)
@@ -42,9 +51,18 @@ namespace Client.Controllers
 		[Route("category/{id}")]
 		public async Task<IActionResult> Detail(string id)
 		{
+			HttpContext.Request.Headers.TryGetValue("Authorization", out var token);
+			if (string.IsNullOrEmpty(token))
+			{
+				return RedirectToAction("Login", "Account");
+			}
+			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.ToString());
+
+
+
 			//Get current category details
 			RootCategoryDTO current;
-			HttpResponseMessage response = await _client.GetAsync(CmsApiUrl + "/category/GetCategoryById?id=" + id);
+			HttpResponseMessage response = await _client.GetAsync(CmsApiUrl + "/category/GetCategoryId/" + id);
 			if (response.IsSuccessStatusCode)
 			{
 				// Get the categories list from response
@@ -59,7 +77,7 @@ namespace Client.Controllers
 			}
 
 			//Get subcategory
-			response = await _client.GetAsync(CmsApiUrl + "/category/GetAllChildCategoriesByParentId");
+			response = await _client.GetAsync(CmsApiUrl + "/category/GetAllChildCategoriesByParentId/"+id);
 			if (response.IsSuccessStatusCode)
 			{
 				// Get the categories list from response
@@ -74,7 +92,7 @@ namespace Client.Controllers
 
 
 			//Get courses
-			response = await _client.GetAsync(CmsApiUrl + "/category/GetCourseByCategoryId");
+			response = await _client.GetAsync(CmsApiUrl + "/course/GetCourseByCategoryId/"+id);
 			if (response.IsSuccessStatusCode)
 			{
 				// Get the categories list from response

@@ -19,7 +19,7 @@ namespace Api.Controllers
         private readonly IMapper _mapper;
         private readonly IJwtHandler _jwtHandler;
 
-        public CategoryController(IUnitOfWork unitOfWork, IMapper mapper, JwtHandler jwtHandler)
+        public CategoryController(IUnitOfWork unitOfWork, IMapper mapper, IJwtHandler jwtHandler)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -70,7 +70,7 @@ namespace Api.Controllers
                 }
 
                 var result = await _unitOfWork._categoryRepository.GetAllAsync();
-                return Ok(result.Where(r => r.Level > 0 && r.ParentId != null && r.CategoryId.Equals(id)).Select(_ => _mapper.Map<RootCategoryDTO>(_)));
+                return Ok(result.Where(r => r.Level > 0 && r.ParentId != null && r.ParentId.Equals(id)).Select(_ => _mapper.Map<RootCategoryDTO>(_)));
             }
             catch (Exception ex)
             {
@@ -101,7 +101,8 @@ namespace Api.Controllers
                 {
                     return NotFound("No category with this id");
                 }
-                return Ok(JsonConvert.SerializeObject(category));
+                return Ok(_mapper.Map<RootCategoryDTO>(category));
+                //return Ok(JsonConvert.SerializeObject(_mapper.Map<RootCategoryDTO>(category)));
 
             }
             catch (Exception ex)

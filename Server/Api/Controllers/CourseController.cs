@@ -278,7 +278,7 @@ namespace Api.Controllers
                     return NotFound("Category with this id is not exist");
                 }
                 var result = courses.Select(_ => _mapper.Map<CourseDTO>((_, category)));
-                return Ok(JsonConvert.SerializeObject(result, Formatting.Indented));
+                return Ok(result);
             }
             catch (Exception e)
             {

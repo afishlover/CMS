@@ -25,12 +25,12 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.Use(async (context, next) =>
 {
-    var token = context.Session.GetString("Token");
+    var token = context.Session.GetString("JWT");
     if (!string.IsNullOrEmpty(token))
     {
-        context.Request.Headers.Add("Authorization", "Bearer " + token);
+		context.Request.Headers.Add("Authorization", token);
     }
-    await next();
+    await next.Invoke();
 });
 app.UseRouting();
 
