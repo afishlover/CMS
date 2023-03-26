@@ -77,12 +77,12 @@ namespace Api.Controllers
                 if (Enum.GetName(account.Role).Equals("Student"))
                 {
                     var identity = await _unitOfWork._studentRepository.GetByUserIdAsync(user.UserId);
-                    return Ok(JsonConvert.SerializeObject(_mapper.Map<DetailedUserDTO>((identity, user)), Formatting.Indented));
+                    return Ok(_mapper.Map<DetailedUserDTO>((identity, user)));
                 }
                 else
                 {
                     var identity = await _unitOfWork._teacherRepository.GetByUserIdAsync(user.UserId);
-                    return Ok(JsonConvert.SerializeObject(_mapper.Map<DetailedUserDTO>((identity, user)), Formatting.Indented));
+                    return Ok(_mapper.Map<DetailedUserDTO>((identity, user)));
                 }
 
             }

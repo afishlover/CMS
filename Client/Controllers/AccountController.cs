@@ -9,84 +9,100 @@ using Newtonsoft.Json;
 
 namespace Client.Controllers
 {
-    [AllowAnonymous]
-    public class AccountController : Controller
-    {
-        private readonly HttpClient _client;
+	[AllowAnonymous]
+	public class AccountController : Controller
+	{
+		private readonly HttpClient _client;
 
-        private readonly IConfiguration _configuration;
-        private string CmsApiUrl;
+		private readonly IConfiguration _configuration;
+		private string CmsApiUrl;
 
-        public AccountController(HttpClient client, IConfiguration configuration)
-        {
-            _client = client;
-            _configuration = configuration;
+		public AccountController(HttpClient client, IConfiguration configuration)
+		{
+			_client = client;
+			_configuration = configuration;
 			CmsApiUrl = _configuration.GetSection("CmsApiRoot").Value;
-        }
+		}
 
-        [HttpGet]
-        [Route("login")]
-        public IActionResult Login()
-        {
-            var isLoggedIn = HttpContext.Session.GetString("isLoggedIn");
-            if (isLoggedIn != null && isLoggedIn.Equals("true"))
-            {
-                return RedirectToAction("Index", "Home");
-            }
-            return View();
-        }
+		[HttpGet]
+		[Route("login")]
+		public IActionResult Login()
+		{
+			var isLoggedIn = HttpContext.Session.GetString("isLoggedIn");
+			if (isLoggedIn != null && isLoggedIn.Equals("true"))
+			{
+				return RedirectToAction("Index", "Home");
+			}
+			return View();
+		}
 
-        [HttpPost]
-        [Route("login")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(AccountDTO accountDTO)
-        {
-            if (ModelState.IsValid)
-            {
-                string strData = JsonConvert.SerializeObject(accountDTO);
-                HttpContent content = new StringContent(strData, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await _client.PostAsync(CmsApiUrl+"/token/post", content);
-                if (response.IsSuccessStatusCode)
-                {
-                    // Get the token from response
-                    var token = await response.Content.ReadAsStringAsync();
+		[HttpPost]
+		[Route("login")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Login(AccountDTO accountDTO)
+		{
+			if (ModelState.IsValid)
+			{
+				string strData = JsonConvert.SerializeObject(accountDTO);
+				HttpContent content = new StringContent(strData, Encoding.UTF8, "application/json");
+				HttpResponseMessage response = await _client.PostAsync(CmsApiUrl + "/token/post", content);
+				if (response.IsSuccessStatusCode)
+				{
+					// Get the token from response
+					var token = await response.Content.ReadAsStringAsync();
 
-                    // Decode the token and get the role of account
-                    var handler = new JwtSecurityTokenHandler();
-                    var jwtSecurityToken = handler.ReadJwtToken(token.Replace('"', ' ').Trim());
-                    var role = jwtSecurityToken.Claims.First(claim => claim.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role").Value;
-                    var accountId = jwtSecurityToken.Claims.First(claim => claim.Type == "Id").Value;
+					// Decode the token and get the role of account
+					var handler = new JwtSecurityTokenHandler();
+					var jwtSecurityToken = handler.ReadJwtToken(token.Replace('"', ' ').Trim());
+					var role = jwtSecurityToken.Claims.First(claim => claim.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role").Value;
+					var accountId = jwtSecurityToken.Claims.First(claim => claim.Type == "Id").Value;
 
-                    // Store data in session
-                    HttpContext.Session.SetString("Role", role.ToString());
-                    HttpContext.Session.SetString("AccountId", accountId.ToString());
-                    HttpContext.Session.SetString("JWT", token.Replace('"', ' ').Trim());
-                    HttpContext.Session.SetString("isLoggedIn", "true");
-                    return RedirectToAction("Index", "Home");
-                }
+					// Store data in session
+					HttpContext.Session.SetString("Role", role.ToString());
+					HttpContext.Session.SetString("AccountId", accountId.ToString());
+					HttpContext.Session.SetString("JWT", token.Replace('"', ' ').Trim());
+					HttpContext.Session.SetString("isLoggedIn", "true");
 
-                ModelState.AddModelError(string.Empty, "Wrong username or password");
-            }
-
-            return View(accountDTO);
-        }
-
-
-        [HttpGet]
-        [Route("/logout")]
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Remove("JWT");
-            HttpContext.Session.Remove("JWT");
-            HttpContext.Session.Remove("isLoggedIn");
-            return RedirectToAction("Login", "Account");
-        }
+					//get User
+					_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace('"', ' ').Trim());
+					response = await _client.GetAsync(CmsApiUrl + "/user/GetDetailedUserProfile");
+					if (response.IsSuccessStatusCode)
+					{
+						var result = await response.Content.ReadAsStringAsync();
+						DetailedUserDTO user = JsonConvert.DeserializeObject<DetailedUserDTO>(result);
+						if (user != null)
+						{
+							HttpContext.Session.SetString("FullName", user.FullName);
+							HttpContext.Session.SetString("Email", user.StudentCode ?? user.TeacherCode);
+						}
+					}
 
 
-        [HttpGet]
-        [Route("/me")]
-        public IActionResult MyProfile()
-        {
+					return RedirectToAction("Index", "Home");
+				}
+
+				ModelState.AddModelError(string.Empty, "Wrong username or password");
+			}
+
+			return View(accountDTO);
+		}
+
+
+		[HttpGet]
+		[Route("/logout")]
+		public IActionResult Logout()
+		{
+			HttpContext.Session.Remove("JWT");
+			HttpContext.Session.Remove("JWT");
+			HttpContext.Session.Remove("isLoggedIn");
+			return RedirectToAction("Login", "Account");
+		}
+
+
+		[HttpGet]
+		[Route("/me")]
+		public IActionResult MyProfile()
+		{
 			HttpContext.Request.Headers.TryGetValue("Authorization", out var token);
 			if (string.IsNullOrEmpty(token))
 			{
@@ -99,10 +115,10 @@ namespace Client.Controllers
 
 
 			return View();
-        }
+		}
 
 		[HttpGet]
-        [Route("/account/{id}")]
+		[Route("/account/{id}")]
 		public IActionResult UserProfile(string id)
 		{
 			HttpContext.Request.Headers.TryGetValue("Authorization", out var token);
@@ -152,7 +168,7 @@ namespace Client.Controllers
 			ViewData["role"] = role;
 
 			if (ModelState.IsValid)
-            {
+			{
 				string strData = JsonConvert.SerializeObject(changePasswordDTO);
 				HttpContent content = new StringContent(strData, Encoding.UTF8, "application/json");
 				HttpResponseMessage response = await _client.PostAsync(CmsApiUrl + "/account/changepassword", content);

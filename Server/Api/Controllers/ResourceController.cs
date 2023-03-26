@@ -169,7 +169,7 @@ namespace Api.Controllers
 
                 var resource = _mapper.Map<Resource>(createResourceDTO);
 
-                var course =  await _unitOfWork._courseRepository.GetByIdAsync(resource.CourseId);
+                var course = await _unitOfWork._courseRepository.GetByIdAsync(resource.CourseId);
                 if (course == null)
                 {
                     return NotFound("No course with this id");
@@ -197,31 +197,32 @@ namespace Api.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteResourceById(Guid id)
-        {
-            try
-            {
-                Request.Headers.TryGetValue("Authorization", out var values);
-                var accountId = _jwtHandler.GetAccountIdFromJwt(values);
-                var account = await _unitOfWork._accountRepository.GetByIdAsync(new Guid(accountId));
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteResourceById(Guid id)
+        //{
+        //    try
+        //    {
+        //        Request.Headers.TryGetValue("Authorization", out var values);
+        //        var accountId = _jwtHandler.GetAccountIdFromJwt(values);
+        //        var account = await _unitOfWork._accountRepository.GetByIdAsync(new Guid(accountId));
 
-                if (account == null)
-                {
-                    return NotFound("User associated with this account is not found");
-                }
-                var user = await _unitOfWork._userRepository.GetByAccountIdAsync(account.AccountId);
-                var teacher = await _unitOfWork._teacherRepository.GetByUserIdAsync(user.UserId);
+        //        if (account == null)
+        //        {
+        //            return NotFound("User associated with this account is not found");
+        //        }
+        //        var user = await _unitOfWork._userRepository.GetByAccountIdAsync(account.AccountId);
+        //        var teacher = await _unitOfWork._teacherRepository.GetByUserIdAsync(user.UserId);
 
-                if (teacher == null)
-                {
-                    return Forbid();
-                }
-                var resource = await _unitOfWork._resourceRepository.GetByIdAsync(id);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
+        //        if (teacher == null)
+        //        {
+        //            return Forbid();
+        //        }
+        //        var resource = await _unitOfWork._resourceRepository.GetByIdAsync(id);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        //    }
+        //}
+    }
 }

@@ -69,6 +69,7 @@ namespace Client.Controllers
 			} else
 			{
 				//get all enrolled courses
+
 			}
 
 			return View();
