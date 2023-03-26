@@ -53,7 +53,7 @@ namespace Api.Controllers
                     .Select(_ =>
                         _mapper.Map<(Course, Teacher, StudentCourse), StudentCourseDTO>(
                             (_.scjcj.result1.c, _.t, _.scjcj.result1.sc)));
-                return Ok(JsonConvert.SerializeObject(result, Formatting.Indented));
+                return Ok(result);
             }
             catch (Exception e)
             {
