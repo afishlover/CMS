@@ -55,11 +55,11 @@ namespace Api.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetDetailedUserProfileByUserId(Guid id)
+        public async Task<IActionResult> GetDetailedUserProfile()
         {
             try
             {
