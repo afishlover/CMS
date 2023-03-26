@@ -11,6 +11,6 @@ namespace Api.Models.DTOs
         public string? Since { get; set; }
         public string? LastUpdate { get; set; }
         public string CategoryName { get; set; }
-        public Guid? CreatorCode { get; set; }
+        public string? CreatorCode { get; set; }
     }
 }

@@ -318,7 +318,7 @@ namespace Api.Controllers
                 newCourse.TeacherId = teacher.TeacherId;
                 newCourse.Since = DateTime.Now;
                 newCourse.LastUpdate = DateTime.Now;
-                newCourse.CreatorCode = teacher.TeacherId;
+                newCourse.CreatorCode = teacher.TeacherCode;
                 await _unitOfWork._courseRepository.AddAsync(newCourse);
                 return Ok("Course create successfully");
             }
