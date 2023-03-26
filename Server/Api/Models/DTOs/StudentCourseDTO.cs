@@ -2,7 +2,8 @@
 
 public class StudentCourseDTO
 {
-    public string TeacherCode { get; set; }
+	public Guid CourseId { get; set; }
+	public string TeacherCode { get; set; }
     public string CourseName { get; set; }
     public string CourseCode { get; set; }
     public string EnrollDate { get; set; }
