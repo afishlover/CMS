@@ -15,7 +15,7 @@ namespace Api.MapperProfiles
                 .ForMember(td => td.Phone, m => m.MapFrom(s => s.Item2.Phone))
                 .ForMember(td => td.Department, m => m.MapFrom(s => Enum.GetName(s.Item1.Department) ?? string.Empty))
                 .ForMember(td => td.Gender, m => m.MapFrom(s => Enum.GetName(s.Item2.Gender) ?? string.Empty))
-                .ForMember(td => td.Birthday, m => m.MapFrom(s => s.Item2.Birthday == null ? s.Item2.Birthday.Value.ToString("dd/MM/yyyy") : string.Empty));
+                .ForMember(td => td.Birthday, m => m.MapFrom(s => s.Item2.Birthday != null ? s.Item2.Birthday.Value.ToString("dd/MM/yyyy") : string.Empty));
         }
     }
 }

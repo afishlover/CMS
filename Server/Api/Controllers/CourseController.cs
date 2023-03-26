@@ -159,7 +159,7 @@ namespace Api.Controllers
                 {
                     return Conflict("Student already enrolled this course!");
                 }
-                var user = await _unitOfWork._userRepository.GeByAccountIdAsync(account.AccountId);
+                var user = await _unitOfWork._userRepository.GetByAccountIdAsync(account.AccountId);
                 
                 var student = await _unitOfWork._studentRepository.GetByUserIdAsync(user.UserId);
 
@@ -305,12 +305,12 @@ namespace Api.Controllers
                     return NotFound("User associated with this account is not found");
                 }
 
-                var user = await _unitOfWork._userRepository.GeByAccountIdAsync(account.AccountId);
+                var user = await _unitOfWork._userRepository.GetByAccountIdAsync(account.AccountId);
                 var teacher = await _unitOfWork._teacherRepository.GetByUserIdAsync(user.UserId);
 
                 if(teacher == null)
                 {
-                    return Forbid("Your account is lmao");
+                    return Forbid();
                 }
 
                 var newCourse = _mapper.Map<Course>(course);
@@ -346,12 +346,12 @@ namespace Api.Controllers
                 {
                     return NotFound("User associated with this account is not found");
                 }
-                var user = await _unitOfWork._userRepository.GeByAccountIdAsync(account.AccountId);
+                var user = await _unitOfWork._userRepository.GetByAccountIdAsync(account.AccountId);
                 var teacher = await _unitOfWork._teacherRepository.GetByUserIdAsync(user.UserId);
 
                 if (teacher == null)
                 {
-                    return Forbid("Your account is lmao");
+                    return Forbid();
                 }
 
                 var course = await _unitOfWork._courseRepository.GetByIdAsync(id);
@@ -389,12 +389,12 @@ namespace Api.Controllers
                 {
                     return NotFound("User associated with this account is not found");
                 }
-                var user = await _unitOfWork._userRepository.GeByAccountIdAsync(account.AccountId);
+                var user = await _unitOfWork._userRepository.GetByAccountIdAsync(account.AccountId);
                 var teacher = await _unitOfWork._teacherRepository.GetByUserIdAsync(user.UserId);
 
                 if (teacher == null)
                 {
-                    return Forbid("Your account is lmao");
+                    return Forbid();
                 }
 
                 var course = await _unitOfWork._courseRepository.GetByIdAsync(updateCourseDTO.CourseId);

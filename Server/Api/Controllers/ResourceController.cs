@@ -117,7 +117,7 @@ namespace Api.Controllers
                 {
                     return NotFound("User associated with this account is not found");
                 }
-                var user = await _unitOfWork._userRepository.GeByAccountIdAsync(account.AccountId);
+                var user = await _unitOfWork._userRepository.GetByAccountIdAsync(account.AccountId);
                 var teacher = await _unitOfWork._teacherRepository.GetByUserIdAsync(user.UserId);
 
                 if (teacher == null)
@@ -159,7 +159,7 @@ namespace Api.Controllers
                 {
                     return NotFound("User associated with this account is not found");
                 }
-                var user = await _unitOfWork._userRepository.GeByAccountIdAsync(account.AccountId);
+                var user = await _unitOfWork._userRepository.GetByAccountIdAsync(account.AccountId);
                 var teacher = await _unitOfWork._teacherRepository.GetByUserIdAsync(user.UserId);
 
                 if (teacher == null)

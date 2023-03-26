@@ -38,7 +38,7 @@ namespace InfrastructureLayer.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<User?> GeByAccountIdAsync(Guid id)
+        public async Task<User?> GetByAccountIdAsync(Guid id)
         {
             return await _queryFactory.Query(Table.USERS_TABLE).Where(Table.USERS_TABLE_ACCOUNTID, "=", id).FirstOrDefaultAsync<User>();
         }

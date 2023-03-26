@@ -2,9 +2,11 @@
 using Api.Models.DTOs;
 using ApplicationLayer;
 using AutoMapper;
+using CoreLayer.Entities;
 using CoreLayer.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Api.Controllers
 {
@@ -46,6 +48,43 @@ namespace Api.Controllers
                             Status = Enum.GetName(typeof(Status), account.Status),
                         });
                 return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetDetailedUserProfileByUserId(Guid id)
+        {
+            try
+            {
+                Request.Headers.TryGetValue("Authorization", out var values);
+                var accountId = _jwtHandler.GetAccountIdFromJwt(values);
+                var account = await _unitOfWork._accountRepository.GetByIdAsync(new Guid(accountId));
+
+                if (account == null)
+                {
+                    return NotFound("User associated with this account is not found");
+                }
+
+                var user = await _unitOfWork._userRepository.GetByAccountIdAsync(account.AccountId);
+
+                if (Enum.GetName(account.Role).Equals("Student"))
+                {
+                    var identity = await _unitOfWork._studentRepository.GetByUserIdAsync(user.UserId);
+                    return Ok(JsonConvert.SerializeObject(_mapper.Map<DetailedUserDTO>((identity, user)), Formatting.Indented));
+                }
+                else
+                {
+                    var identity = await _unitOfWork._teacherRepository.GetByUserIdAsync(user.UserId);
+                    return Ok(JsonConvert.SerializeObject(_mapper.Map<DetailedUserDTO>((identity, user)), Formatting.Indented));
+                }
+
             }
             catch (Exception e)
             {

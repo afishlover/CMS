@@ -43,7 +43,7 @@ namespace Api.Controllers
                 }
                 var students = await _unitOfWork._studentRepository.GetAllAsync();
                 var studentCourse = await _unitOfWork._studentCourseRepository.GetByCourseIdAsync(id);
-                var user = await _unitOfWork._userRepository.GeByAccountIdAsync(account.AccountId);
+                var user = await _unitOfWork._userRepository.GetByAccountIdAsync(account.AccountId);
                 if (!studentCourse.Any())
                 {
                     return NoContent();

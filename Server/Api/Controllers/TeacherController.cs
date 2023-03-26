@@ -43,7 +43,7 @@ namespace Api.Controllers
                     return NotFound("User associated with this account is not found");
                 }
 
-                var user = await _unitOfWork._userRepository.GeByAccountIdAsync(account.AccountId);
+                var user = await _unitOfWork._userRepository.GetByAccountIdAsync(account.AccountId);
                 var teachers = await _unitOfWork._teacherRepository.GetAllAsync();
 
                 if(!teachers.Any())
