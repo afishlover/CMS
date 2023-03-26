@@ -4,10 +4,20 @@ namespace Api.Utils
 {
     public class FileHandler : IFileHandler
     {
-        public string Download()
+        public Task Delete(string path)
         {
-            throw new NotImplementedException();
+            System.IO.DirectoryInfo di = new DirectoryInfo(path);
+            foreach (FileInfo file in di.EnumerateFiles())
+            {
+                file.Delete();
+            }
+            foreach (DirectoryInfo dir in di.EnumerateDirectories())
+            {
+                dir.Delete(true);
+            }
+            return Task.CompletedTask;
         }
+
 
         public async Task<string?> Upload(IFormFile file, string path, string fileName)
         {

@@ -28,6 +28,11 @@ namespace Api.Controllers {
                 var account = await _unitOfWork._accountRepository.GetAccountByEmailAndPasswordAsync(accountDTO.Email, accountDTO.Password);
                 if(account != null) {
                     try {
+                        if(Enum.GetName(account.Status).Equals("deactivate"))
+                        {
+                            return BadRequest("Your account is not activate");
+
+                        }
                         return Ok(_jwtHandler.GenerateJwtToken(account));
                     }
                     catch (Exception) {

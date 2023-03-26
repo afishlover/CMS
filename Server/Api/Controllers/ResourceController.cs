@@ -169,7 +169,7 @@ namespace Api.Controllers
 
                 var resource = _mapper.Map<Resource>(createResourceDTO);
 
-                var course =  await _unitOfWork._courseRepository.GetByIdAsync(resource.CourseId);
+                var course = await _unitOfWork._courseRepository.GetByIdAsync(resource.CourseId);
                 if (course == null)
                 {
                     return NotFound("No course with this id");
@@ -198,6 +198,10 @@ namespace Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteResourceById(Guid id)
         {
             try
@@ -218,10 +222,21 @@ namespace Api.Controllers
                     return Forbid();
                 }
                 var resource = await _unitOfWork._resourceRepository.GetByIdAsync(id);
+                if (resource == null)
+                {
+                    return NotFound("No resource with this id found");
+                }
+                if (resource.FileURL != null)
+                {
+                     await _fileHandler.Delete("");
+                }
+                await _unitOfWork._resourceRepository.DeleteAsync(id);
+                return Ok("Deleted");
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+    }
 }
