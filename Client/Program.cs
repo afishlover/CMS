@@ -28,7 +28,7 @@ app.Use(async (context, next) =>
     var token = context.Session.GetString("JWT");
     if (!string.IsNullOrEmpty(token))
     {
-		context.Request.Headers.Add("Authorization", token);
+		context.Request.Headers.Add("Authorization", "Bearer " + token);
     }
     await next.Invoke();
 });

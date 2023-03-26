@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using System.Text;
 using Client.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
@@ -86,6 +87,16 @@ namespace Client.Controllers
         [Route("/me")]
         public IActionResult MyProfile()
         {
+			HttpContext.Request.Headers.TryGetValue("Authorization", out var token);
+			if (string.IsNullOrEmpty(token))
+			{
+				return RedirectToAction("Login", "Account");
+			}
+			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.ToString());
+
+			var role = HttpContext.Session.GetString("Role");
+			ViewData["role"] = role;
+
 
 			return View();
         }
@@ -94,6 +105,17 @@ namespace Client.Controllers
         [Route("/account/{id}")]
 		public IActionResult UserProfile(string id)
 		{
+			HttpContext.Request.Headers.TryGetValue("Authorization", out var token);
+			if (string.IsNullOrEmpty(token))
+			{
+				return RedirectToAction("Login", "Account");
+			}
+			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.ToString());
+
+			var role = HttpContext.Session.GetString("Role");
+			ViewData["role"] = role;
+
+
 			return View("MyProfile");
 		}
 
@@ -101,6 +123,17 @@ namespace Client.Controllers
 		[Route("/changepassword")]
 		public IActionResult ChangePassword()
 		{
+			HttpContext.Request.Headers.TryGetValue("Authorization", out var token);
+			if (string.IsNullOrEmpty(token))
+			{
+				return RedirectToAction("Login", "Account");
+			}
+			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.ToString());
+
+			var role = HttpContext.Session.GetString("Role");
+			ViewData["role"] = role;
+
+
 			return View();
 		}
 
@@ -108,7 +141,17 @@ namespace Client.Controllers
 		[Route("/changepassword")]
 		public async Task<IActionResult> ChangePassword(ChangePasswordDTO changePasswordDTO)
 		{
-            if (ModelState.IsValid)
+			HttpContext.Request.Headers.TryGetValue("Authorization", out var token);
+			if (string.IsNullOrEmpty(token))
+			{
+				return RedirectToAction("Login", "Account");
+			}
+			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.ToString());
+
+			var role = HttpContext.Session.GetString("Role");
+			ViewData["role"] = role;
+
+			if (ModelState.IsValid)
             {
 				string strData = JsonConvert.SerializeObject(changePasswordDTO);
 				HttpContent content = new StringContent(strData, Encoding.UTF8, "application/json");
