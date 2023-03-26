@@ -249,7 +249,7 @@ namespace Client.Controllers
 			return View();
 		}
 
-		[HttpPost]
+		[HttpGet]
 		public async Task<IActionResult> Delete(string id)
 		{
 			HttpContext.Request.Headers.TryGetValue("Authorization", out var token);
@@ -262,8 +262,13 @@ namespace Client.Controllers
 			var role = HttpContext.Session.GetString("Role");
 			ViewData["role"] = role;
 
+			HttpResponseMessage response = await _client.DeleteAsync(CmsApiUrl + "/course/DeleteCourse/" + id);
+			if (response.IsSuccessStatusCode)
+			{
+				return RedirectToAction("Index", "Home");
+			}
 
-			return View();
+			return RedirectToAction("Detail", "Course", new {id = id});
 		}
 
 		[HttpPost]

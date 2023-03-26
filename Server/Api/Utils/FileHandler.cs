@@ -6,14 +6,22 @@ namespace Api.Utils
     {
         public Task Delete(string path)
         {
-            System.IO.DirectoryInfo di = new DirectoryInfo(path);
-            foreach (FileInfo file in di.EnumerateFiles())
+            try
             {
-                file.Delete();
-            }
-            foreach (DirectoryInfo dir in di.EnumerateDirectories())
+                System.IO.DirectoryInfo di = new DirectoryInfo(path);
+                foreach (FileInfo file in di.EnumerateFiles())
+                {
+                    if (File.Exists(file.FullName))
+                        file.Delete();
+                }
+                foreach (DirectoryInfo dir in di.EnumerateDirectories())
+                {
+                    if (Directory.Exists(dir.FullName))
+                        dir.Delete(true);
+                }
+            } catch (Exception)
             {
-                dir.Delete(true);
+                return Task.CompletedTask;
             }
             return Task.CompletedTask;
         }
