@@ -9,6 +9,7 @@ public class TeacherCourseProfile : Profile
     public TeacherCourseProfile()
     {
         CreateMap<Course, TeacherCourseDTO>()
+            .ForMember(c => c.CourseId, m => m.MapFrom(s => s.CourseId))
             .ForMember(c => c.CourseCode, m => m.MapFrom(s => s.CourseCode))
             .ForMember(c => c.CategoryId, m => m.MapFrom(s => s.CategoryId))
             .ForMember(c => c.CourseName, m => m.MapFrom(s => s.CourseName))

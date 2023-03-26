@@ -135,7 +135,7 @@ namespace Api.Controllers
                 {
                     return NoContent();
                 }
-                return Ok(JsonConvert.SerializeObject(categories.Select(_ => _mapper.Map<RootCategoryDTO>(_))));
+                return Ok(categories.Select(_ => _mapper.Map<RootCategoryDTO>(_)));
 
             }
             catch (Exception ex)

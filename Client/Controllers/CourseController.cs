@@ -20,8 +20,57 @@ namespace Client.Controllers
 			_configuration = configuration;
 			CmsApiUrl = _configuration.GetSection("CmsApiRoot").Value;
 		}
-		public IActionResult Index()
+
+		[HttpGet]
+		[Route("course/mine")]
+		public async Task<IActionResult> MyCourses()
 		{
+			HttpContext.Request.Headers.TryGetValue("Authorization", out var token);
+			if (string.IsNullOrEmpty(token))
+			{
+				return RedirectToAction("Login", "Account");
+			}
+			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.ToString());
+
+			var role = HttpContext.Session.GetString("Role");
+			ViewData["role"] = role;
+
+			if (role.Equals("Teacher"))
+			{
+				//Get all cates
+				HttpResponseMessage response = await _client.GetAsync(CmsApiUrl + "/category/GetAllCategories");
+				List<RootCategoryDTO> categories = new List<RootCategoryDTO>();
+				if (response.IsSuccessStatusCode)
+				{
+					// Get the categories list from response
+					var result = await response.Content.ReadAsStringAsync();
+					categories = JsonConvert.DeserializeObject<List<RootCategoryDTO>>(result);
+				}
+				if (categories != null)
+				{
+					ViewData["categories"] = categories;
+				}
+
+
+				//get courses where teacher is logged user
+				string teacherId = HttpContext.Session.GetString("AccountId");
+				response = await _client.GetAsync(CmsApiUrl + "/course/GetCoursesByTeacherId?teacherId=" + teacherId);
+				if (response.IsSuccessStatusCode)
+				{
+					var result = await response.Content.ReadAsStringAsync();
+					List<CourseDTO> courses = JsonConvert.DeserializeObject<List<CourseDTO>>(result);
+					if (courses == null)
+					{
+						courses = new List<CourseDTO>();
+					}
+					ViewData["courses"] = courses;
+				}
+
+			} else
+			{
+				//get all enrolled courses
+			}
+
 			return View();
 		}
 
@@ -49,14 +98,17 @@ namespace Client.Controllers
 			{
 				return RedirectToAction("Login", "Account");
 			}
-			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.ToString());
+			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.ToString());
+
+			var role = HttpContext.Session.GetString("Role");
+			ViewData["role"] = role;
 
 			string strData = JsonConvert.SerializeObject(course);
 			HttpContent content = new StringContent(strData, Encoding.UTF8, "application/json");
 			HttpResponseMessage response = await _client.PostAsync(CmsApiUrl + "/course/CreateCourse", content);
 			if (response.IsSuccessStatusCode)
 			{
-				return RedirectToAction("Detail", "Category", CategoryId);
+				return RedirectToAction("Detail", "Category", new { id = CategoryId});
 			}
 
 			return RedirectToAction("Index", "Home");
@@ -88,7 +140,10 @@ namespace Client.Controllers
 			{
 				return RedirectToAction("Login", "Account");
 			}
-			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.ToString());
+			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.ToString());
+
+			var role = HttpContext.Session.GetString("Role");
+			ViewData["role"] = role;
 
 			string strData = JsonConvert.SerializeObject(course);
 			HttpContent content = new StringContent(strData, Encoding.UTF8, "application/json");
@@ -110,7 +165,7 @@ namespace Client.Controllers
 			{
 				return RedirectToAction("Login", "Account");
 			}
-			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.ToString());
+			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.ToString());
 
 			var role = HttpContext.Session.GetString("Role");
 			ViewData["role"] = role;
@@ -132,19 +187,19 @@ namespace Client.Controllers
 				ViewData["currentCourse"] = current;
 			}
 
-			//Get subcategory
-			//response = await _client.GetAsync(CmsApiUrl + "/category/GetAllChildCategoriesByParentId/" + id);
-			//if (response.IsSuccessStatusCode)
-			//{
-			//	// Get the categories list from response
-			//	var result = await response.Content.ReadAsStringAsync();
-			//	List<RootCategoryDTO> categories = JsonConvert.DeserializeObject<List<RootCategoryDTO>>(result);
-			//	if (categories == null)
-			//	{
-			//		categories = new List<RootCategoryDTO>();
-			//	}
-			//	ViewData["categories"] = categories;
-			//}
+			// Get students
+			response = await _client.GetAsync(CmsApiUrl + "/Student/GetStudentsByCourseId/" + id);
+			if (response.IsSuccessStatusCode)
+			{
+				// Get the categories list from response
+				var result = await response.Content.ReadAsStringAsync();
+				List<StudentDTO> students = JsonConvert.DeserializeObject<List<StudentDTO>>(result);
+				if (students == null)
+				{
+					students = new List<StudentDTO>();
+				}
+				ViewData["students"] = students;
+			}
 
 
 			//Get courses
@@ -160,6 +215,58 @@ namespace Client.Controllers
 			//	}
 			//	ViewData["courses"] = courses;
 			//}
+
+
+			return View();
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> Delete(string id)
+		{
+			HttpContext.Request.Headers.TryGetValue("Authorization", out var token);
+			if (string.IsNullOrEmpty(token))
+			{
+				return RedirectToAction("Login", "Account");
+			}
+			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.ToString());
+
+			var role = HttpContext.Session.GetString("Role");
+			ViewData["role"] = role;
+
+
+			return View();
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> Enroll(string id)
+		{
+			HttpContext.Request.Headers.TryGetValue("Authorization", out var token);
+			if (string.IsNullOrEmpty(token))
+			{
+				return RedirectToAction("Login", "Account");
+			}
+			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.ToString());
+
+			var role = HttpContext.Session.GetString("Role");
+			ViewData["role"] = role;
+
+
+			return View();
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> Unenroll(string id)
+		{
+
+			HttpContext.Request.Headers.TryGetValue("Authorization", out var token);
+			if (string.IsNullOrEmpty(token))
+			{
+				return RedirectToAction("Login", "Account");
+			}
+			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.ToString());
+
+			var role = HttpContext.Session.GetString("Role");
+			ViewData["role"] = role;
 
 
 			return View();

@@ -29,7 +29,7 @@ namespace Client.Controllers
 			{
 				return RedirectToAction("Login", "Account");
 			}
-			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.ToString());
+			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.ToString());
 
 			//Get root cates
 			HttpResponseMessage response = await _client.GetAsync(CmsApiUrl + "/category/GetAllRootCategories");
@@ -58,7 +58,7 @@ namespace Client.Controllers
 			{
 				return RedirectToAction("Login", "Account");
 			}
-			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.ToString());
+			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.ToString());
 
 
 
