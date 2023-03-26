@@ -1,5 +1,6 @@
 using Api.Interfaces;
 using Api.Models.DTOs;
+using Api.Utils;
 using ApplicationLayer;
 using AutoMapper;
 using CoreLayer.Entities;
@@ -16,12 +17,14 @@ namespace Api.Controllers
         private readonly IMapper _mapper;
         private readonly IJwtHandler _jwtHandler;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IFileHandler _fileHandler;
 
-        public CourseController(IMapper mapper, IUnitOfWork unitOfWork, IJwtHandler jwtHandler)
+        public CourseController(IUnitOfWork unitOfWork, IMapper mapper, IJwtHandler jwtHandler, IFileHandler fileHandler)
         {
-            _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
             _jwtHandler = jwtHandler;
+            _fileHandler = fileHandler;
         }
 
         [HttpPost("{id}")]
@@ -361,6 +364,9 @@ namespace Api.Controllers
                 }
                 await _unitOfWork._studentCourseRepository.DeleteAsync(id);
                 await _unitOfWork._resourceRepository.DeleteByCourseIdAsync(id);
+                var folderPath = $"Resources/{course.CategoryId}/{course.CourseId}";
+                var savePath = Path.Combine(Directory.GetCurrentDirectory(), folderPath);
+                await _fileHandler.Delete(savePath);
                 await _unitOfWork._courseRepository.DeleteAsync(id);
 
                 return Ok("Delete course successfully");

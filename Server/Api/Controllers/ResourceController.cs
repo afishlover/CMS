@@ -226,9 +226,13 @@ namespace Api.Controllers
                 {
                     return NotFound("No resource with this id found");
                 }
+
+                var course = await _unitOfWork._courseRepository.GetByIdAsync(resource.CourseId);
                 if (resource.FileURL != null)
                 {
-                     await _fileHandler.Delete("");
+                    var folderPath = $"Resources/{course.CategoryId}/{course.CourseId}";
+                    var savePath = Path.Combine(Directory.GetCurrentDirectory(), folderPath);
+                    await _fileHandler.Delete(savePath);
                 }
                 await _unitOfWork._resourceRepository.DeleteAsync(id);
                 return Ok("Deleted");
