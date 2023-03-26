@@ -468,7 +468,7 @@ namespace Api.Controllers
 
                 if (studentCourse == null)
                 {
-                    return NoContent();
+                    return NotFound();
                 }
                 return Ok("Enrolled");
             }

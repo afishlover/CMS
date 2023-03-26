@@ -233,16 +233,16 @@ namespace Client.Controllers
 			//check enrolled
 			if (role.Equals("Student"))
 			{
+				ViewData["enrolled"] = "false";
 				response = await _client.GetAsync(CmsApiUrl + "/course/CheckStudentEnrollCourse/" + id);
 				if (response.IsSuccessStatusCode)
 				{
 					var result = await response.Content.ReadAsStringAsync();
 					if (JsonConvert.DeserializeObject(result).Equals("Enrolled"))
 					{
-						ViewData["enrolled"] = true;
+						ViewData["enrolled"] = "true";
 					}
 				}
-				ViewData["enrolled"] = false;
 			}
 
 
@@ -268,7 +268,7 @@ namespace Client.Controllers
 				return RedirectToAction("Index", "Home");
 			}
 
-			return RedirectToAction("Detail", "Course", new {id = id});
+			return RedirectToAction("Detail", "Course", new { id = id });
 		}
 
 		[HttpPost]
@@ -284,8 +284,9 @@ namespace Client.Controllers
 			var role = HttpContext.Session.GetString("Role");
 			ViewData["role"] = role;
 
-
-			return View();
+			HttpContent content = new StringContent(id, Encoding.UTF8, "application/json");
+			HttpResponseMessage response = await _client.PostAsync(CmsApiUrl + "/course/EnrollStudentCourseById", content);
+			return RedirectToAction("Detail", "Course", new { id = id });
 		}
 
 		[HttpPost]
@@ -302,8 +303,8 @@ namespace Client.Controllers
 			var role = HttpContext.Session.GetString("Role");
 			ViewData["role"] = role;
 
-
-			return View();
+			HttpResponseMessage response = await _client.DeleteAsync(CmsApiUrl + "/course/UnEnrollStudentCourseById/" + id);
+			return RedirectToAction("Detail", "Course", new { id = id });
 		}
 	}
 }

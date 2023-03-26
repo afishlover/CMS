@@ -58,7 +58,7 @@
 										<div class="d-flex mb-4">
 											<a href="#" class="btn btn-sm btn-primary me-3" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target">Add Resource</a>
 										</div>
-									//check edit course
+				//check edit course
 										<div class="d-flex mb-4">
 											<a href="#" class="btn btn-sm btn-primary me-3" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target">Edit course</a>
 										</div>
@@ -68,19 +68,25 @@
 									}
 									else
 									{
-										var check = (bool)ViewData["enrolled"];
+										var enrolled = ViewData["enrolled"];
 										//check enrolled
-										if ((bool)ViewData["enrolled"])
+										if (enrolled.Equals("true"))
 										{
-											<div class="d-flex mb-4">
-												<a href="#" class="btn btn-sm btn-primary me-3">Enroll</a>
-											</div>
+											<form asp-controller="Course" asp-action="Enroll" method="POST">
+												<input type="hidden" name="id" value=@course.CourseId />
+												<div class="d-flex mb-4">
+													<button type="submit" class="btn btn-sm btn-primary me-3">Unenroll</button>
+												</div>
+											</form>
 										}
 										else
 										{
-											<div class="d-flex mb-4">
-												<a href="#" class="btn btn-sm btn-primary me-3">Unenroll</a>
-											</div>
+											<form asp-controller="Course" asp-action="Enroll" method="POST">
+												<input type="hidden" name="id" value=@course.CourseId />
+												<div class="d-flex mb-4">
+													<button type="submit" class="btn btn-sm btn-primary me-3">Enroll</button>
+												</div>
+											</form>
 										}
 									}
 								}
