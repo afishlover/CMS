@@ -61,5 +61,67 @@ namespace Client.Controllers
 
 			return RedirectToAction("Index", "Home");
 		}
+
+		[HttpGet("{id}")]
+
+		public async Task<IActionResult> Detail(string id)
+		{
+			HttpContext.Request.Headers.TryGetValue("Authorization", out var token);
+			if (string.IsNullOrEmpty(token))
+			{
+				return RedirectToAction("Login", "Account");
+			}
+			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.ToString());
+
+
+
+			//Get current course details
+			CourseDTO current;
+			HttpResponseMessage response = await _client.GetAsync(CmsApiUrl + "/course/GetCourseById/" + id);
+			if (response.IsSuccessStatusCode)
+			{
+				// Get the categories list from response
+				var result = await response.Content.ReadAsStringAsync();
+				current = JsonConvert.DeserializeObject<CourseDTO>(result);
+				if (current == null)
+				{
+					//Error: can not found category
+					return RedirectToAction("Index", "Category");
+				}
+				ViewData["currentCourse"] = current;
+			}
+
+			//Get subcategory
+			//response = await _client.GetAsync(CmsApiUrl + "/category/GetAllChildCategoriesByParentId/" + id);
+			//if (response.IsSuccessStatusCode)
+			//{
+			//	// Get the categories list from response
+			//	var result = await response.Content.ReadAsStringAsync();
+			//	List<RootCategoryDTO> categories = JsonConvert.DeserializeObject<List<RootCategoryDTO>>(result);
+			//	if (categories == null)
+			//	{
+			//		categories = new List<RootCategoryDTO>();
+			//	}
+			//	ViewData["categories"] = categories;
+			//}
+
+
+			//Get courses
+			//response = await _client.GetAsync(CmsApiUrl + "/course/GetCourseByCategoryId/" + id);
+			//if (response.IsSuccessStatusCode)
+			//{
+			//	// Get the categories list from response
+			//	var result = await response.Content.ReadAsStringAsync();
+			//	List<CourseDTO> courses = JsonConvert.DeserializeObject<List<CourseDTO>>(result);
+			//	if (courses == null)
+			//	{
+			//		courses = new List<CourseDTO>();
+			//	}
+			//	ViewData["courses"] = courses;
+			//}
+
+
+			return View();
+		}
 	}
 }
