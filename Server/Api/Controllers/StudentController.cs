@@ -51,7 +51,7 @@ namespace Api.Controllers
                 }
                 var result = studentCourse.Join(students, sc => sc.StudentId, s => s.StudentId, (sc, s) => new { sc, s})
                     .Join(users, r1 => r1.s.UserId, u => u.UserId, (r1, r2) => _mapper.Map<StudentDTO>((r1.sc, r1.s, r2)));
-                return Ok(JsonConvert.SerializeObject(result, Formatting.Indented));
+                return Ok(result);
             }
             catch (Exception e)
             {

@@ -72,7 +72,7 @@ namespace Client.Controllers
 				//get all enrolled courses
 				string studentId = HttpContext.Session.GetString("AccountId");
 				HttpContent content = new StringContent(studentId, Encoding.UTF8, "application/json");
-				HttpResponseMessage response = await _client.PostAsync(CmsApiUrl + "/course/GetStudentCoursesByStudentId", content);
+				HttpResponseMessage response = await _client.PostAsync(CmsApiUrl + "/course/GetStudentCoursesByStudentId/"+ studentId, content);
 				if (response.IsSuccessStatusCode)
 				{
 					var result = await response.Content.ReadAsStringAsync();
@@ -233,23 +233,24 @@ namespace Client.Controllers
 			//check enrolled
 			if (role.Equals("Student"))
 			{
-				response = await _client.GetAsync(CmsApiUrl + "/course/CheckStudentEnrollCourse/" + id);
+				ViewData["enrolled"] = "false";
+				HttpContent content = new StringContent(id, Encoding.UTF8, "application/json");
+				response = await _client.PostAsync(CmsApiUrl + "/course/CheckStudentEnrollCourse/" + id, content);
 				if (response.IsSuccessStatusCode)
 				{
 					var result = await response.Content.ReadAsStringAsync();
 					if (JsonConvert.DeserializeObject(result).Equals("Enrolled"))
 					{
-						ViewData["enrolled"] = true;
+						ViewData["enrolled"] = "true";
 					}
 				}
-				ViewData["enrolled"] = false;
 			}
 
 
 			return View();
 		}
 
-		[HttpPost]
+		[HttpGet]
 		public async Task<IActionResult> Delete(string id)
 		{
 			HttpContext.Request.Headers.TryGetValue("Authorization", out var token);
@@ -262,8 +263,13 @@ namespace Client.Controllers
 			var role = HttpContext.Session.GetString("Role");
 			ViewData["role"] = role;
 
+			HttpResponseMessage response = await _client.DeleteAsync(CmsApiUrl + "/course/DeleteCourse/" + id);
+			if (response.IsSuccessStatusCode)
+			{
+				return RedirectToAction("Index", "Home");
+			}
 
-			return View();
+			return RedirectToAction("Detail", "Course", new { id = id });
 		}
 
 		[HttpPost]
@@ -279,8 +285,9 @@ namespace Client.Controllers
 			var role = HttpContext.Session.GetString("Role");
 			ViewData["role"] = role;
 
-
-			return View();
+			HttpContent content = new StringContent(id, Encoding.UTF8, "application/json");
+			HttpResponseMessage response = await _client.PostAsync(CmsApiUrl + "/course/EnrollStudentCourseById/"+id, content);
+			return RedirectToAction("Detail", "Course", new { id = id });
 		}
 
 		[HttpPost]
@@ -297,8 +304,8 @@ namespace Client.Controllers
 			var role = HttpContext.Session.GetString("Role");
 			ViewData["role"] = role;
 
-
-			return View();
+			HttpResponseMessage response = await _client.DeleteAsync(CmsApiUrl + "/course/UnEnrollStudentCourseById/" + id);
+			return RedirectToAction("Detail", "Course", new { id = id });
 		}
 	}
 }

@@ -42,14 +42,18 @@ namespace Api.Controllers
                 return NotFound("Account not recognized");
             }
 
-            try
+			var user = await _unitOfWork._userRepository.GetByAccountIdAsync(account.AccountId);
+
+			var student = await _unitOfWork._studentRepository.GetByUserIdAsync(user.UserId);
+
+			try
             {
                 var studentCourses = await _unitOfWork._studentCourseRepository.GetAllAsync();
                 var courses = await _unitOfWork._courseRepository.GetAllAsync();
                 var categories = await _unitOfWork._categoryRepository.GetAllAsync();
                 var teachers = await _unitOfWork._teacherRepository.GetAllAsync();
                 var result = studentCourses
-                    .Where(sc => sc.StudentId.Equals(id))
+                    .Where(sc => sc.StudentId.Equals(student.StudentId))
                     .Join(courses, sc => sc.CourseId, c => c.CourseId, (sc, c) => new { sc, c })
                     .Join(categories, scj => scj.c.CategoryId, c => c.CategoryId, (scj, c) => new { result1 = scj, c })
                     .Join(teachers, result2 => result2.result1.c.TeacherId, t => t.TeacherId, (scjcj, t) => (scjcj, t))
@@ -456,7 +460,7 @@ namespace Api.Controllers
 
                 if (studentCourse == null)
                 {
-                    return NoContent();
+                    return NotFound();
                 }
                 return Ok("Enrolled");
             }

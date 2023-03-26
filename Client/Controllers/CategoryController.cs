@@ -30,6 +30,8 @@ namespace Client.Controllers
 				return RedirectToAction("Login", "Account");
 			}
 			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.ToString());
+			var role = HttpContext.Session.GetString("Role");
+			ViewData["role"] = role;
 
 			//Get root cates
 			HttpResponseMessage response = await _client.GetAsync(CmsApiUrl + "/category/GetAllRootCategories");
@@ -43,6 +45,20 @@ namespace Client.Controllers
 			if (categories != null)
 			{
 				ViewData["categories"] = categories;
+			}
+
+			//Get all cates
+			response = await _client.GetAsync(CmsApiUrl + "/category/GetAllCategories");
+			List<RootCategoryDTO> allCategories = new List<RootCategoryDTO>();
+			if (response.IsSuccessStatusCode)
+			{
+				// Get the categories list from response
+				var result = await response.Content.ReadAsStringAsync();
+				allCategories = JsonConvert.DeserializeObject<List<RootCategoryDTO>>(result);
+			}
+			if (allCategories != null)
+			{
+				ViewData["allCategories"] = allCategories;
 			}
 
 
@@ -59,6 +75,8 @@ namespace Client.Controllers
 				return RedirectToAction("Login", "Account");
 			}
 			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.ToString());
+			var role = HttpContext.Session.GetString("Role");
+			ViewData["role"] = role;
 
 
 
@@ -105,6 +123,20 @@ namespace Client.Controllers
 					courses = new List<CourseDTO>();
 				}
 				ViewData["courses"] = courses;
+			}
+
+			//Get all cates
+			response = await _client.GetAsync(CmsApiUrl + "/category/GetAllCategories");
+			List<RootCategoryDTO> allCategories = new List<RootCategoryDTO>();
+			if (response.IsSuccessStatusCode)
+			{
+				// Get the categories list from response
+				var result = await response.Content.ReadAsStringAsync();
+				allCategories = JsonConvert.DeserializeObject<List<RootCategoryDTO>>(result);
+			}
+			if (allCategories != null)
+			{
+				ViewData["allCategories"] = allCategories;
 			}
 
 
