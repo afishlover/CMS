@@ -111,6 +111,38 @@ namespace Api.Controllers
             }
         }
 
+        [HttpGet]
+        //[Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAllCategories()
+        {
+            try
+            {
+                Request.Headers.TryGetValue("Authorization", out var values);
+                var accountId = _jwtHandler.GetAccountIdFromJwt(values);
+                var account = await _unitOfWork._accountRepository.GetByIdAsync(new Guid(accountId));
+
+                if (account == null)
+                {
+                    return NotFound("User associated with this account is not found");
+                }
+
+                var categories = await _unitOfWork._categoryRepository.GetAllAsync();
+
+                if (!categories.Any())
+                {
+                    return NoContent();
+                }
+                return Ok(JsonConvert.SerializeObject(categories.Select(_ => _mapper.Map<RootCategoryDTO>(_))));
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
 
         //[HttpGet]
         //[ProducesResponseType(StatusCodes.Status200OK)]

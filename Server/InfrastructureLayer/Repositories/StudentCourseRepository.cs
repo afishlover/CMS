@@ -26,9 +26,9 @@ public class StudentCourseRepository : IStudentCourseRepository
         return await _queryFactory.Query(Table.STUDENTCOURSES_TABLE).Where(Table.STUDENTCOURSES_TABLE_STUDENTID, "=", studentId).GetAsync<StudentCourse>();
     }
 
-    public Task<int> AddAsync(StudentCourse entity)
+    public async Task<int> AddAsync(StudentCourse entity)
     {
-        throw new NotImplementedException();
+        return await _queryFactory.Query(Table.STUDENTCOURSES_TABLE).InsertAsync(entity);
     }
 
     public Task<int> UpdateAsync(StudentCourse entity)
