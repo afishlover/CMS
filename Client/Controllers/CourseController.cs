@@ -62,8 +62,47 @@ namespace Client.Controllers
 			return RedirectToAction("Index", "Home");
 		}
 
-		[HttpGet("{id}")]
+		[HttpPost]
+		public async Task<IActionResult> Edit(IFormCollection form)
+		{
+			string CourseName = form["courseName"];
+			string CourseCode = form["courseCode"];
+			DateTime StartDate = DateTime.Parse(form["startDate"]);
+			DateTime EndDate = DateTime.Parse(form["endDate"]);
+			string CategoryName = form["categoryName"];
+			Guid CourseId = Guid.Parse(form["courseId"]);
+			//validate
 
+			UpdateCourseDTO course = new UpdateCourseDTO
+			{
+				CourseId = CourseId,
+				CourseName = CourseName,
+				CourseCode = CourseCode,
+				StartDate = StartDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+				EndDate = EndDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+				CategoryName = CategoryName
+			};
+
+			HttpContext.Request.Headers.TryGetValue("Authorization", out var token);
+			if (string.IsNullOrEmpty(token))
+			{
+				return RedirectToAction("Login", "Account");
+			}
+			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.ToString());
+
+			string strData = JsonConvert.SerializeObject(course);
+			HttpContent content = new StringContent(strData, Encoding.UTF8, "application/json");
+			HttpResponseMessage response = await _client.PutAsync(CmsApiUrl + "/course/UpdateCourse", content);
+			if (response.IsSuccessStatusCode)
+			{
+				return RedirectToAction("Detail", "Course", CourseId);
+			}
+
+			return RedirectToAction("Index", "Home");
+		}
+
+		[HttpGet]
+		[Route("course/{id}")]
 		public async Task<IActionResult> Detail(string id)
 		{
 			HttpContext.Request.Headers.TryGetValue("Authorization", out var token);
@@ -73,6 +112,8 @@ namespace Client.Controllers
 			}
 			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.ToString());
 
+			var role = HttpContext.Session.GetString("Role");
+			ViewData["role"] = role;
 
 
 			//Get current course details

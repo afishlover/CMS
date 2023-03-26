@@ -4,7 +4,8 @@ namespace Api.Models.DTOs
 {
     public class CourseDTO
     {
-        public string CourseName { get; set; }
+		public Guid CourseId { get; set; }
+		public string CourseName { get; set; }
         public string CourseCode { get; set; }
         public string? StartDate { get; set; }
         public string? EndDate { get; set; }

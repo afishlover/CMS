@@ -9,6 +9,7 @@ namespace Api.MapperProfiles
         public CourseProfile()
         {
             CreateMap<(Course, Category), CourseDTO>()
+                .ForMember(cd => cd.CourseId, m => m.MapFrom(s => s.Item1.CourseId))
                 .ForMember(cd => cd.CourseCode, m => m.MapFrom(s => s.Item1.CourseCode))
                 .ForMember(cd => cd.CategoryName, m => m.MapFrom(s => s.Item2.CategoryName))
                 .ForMember(cd => cd.CourseName, m => m.MapFrom(s => s.Item1.CourseName))
