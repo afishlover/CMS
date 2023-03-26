@@ -4,7 +4,8 @@
 @{
 	ViewData["Title"] = "Categories";
 	var categories = (List<RootCategoryDTO>)ViewData["categories"];
-	var allCategories = (List<RootCategoryDTO>)ViewData["categories"];
+	var allCategories = (List<RootCategoryDTO>)ViewData["allCategories"];
+	var role = ViewData["role"];
 }
 
 
@@ -43,9 +44,13 @@
 								</div>
 								<!--end::Details-->
 								<!--begin::Actions-->
-								<div class="d-flex mb-4">
-									<a href="#" class="btn btn-sm btn-primary me-3" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target">Create Course</a>
-								</div>
+								@if (role.Equals("Teacher"))
+								{
+
+									<div class="d-flex mb-4">
+										<a href="#" class="btn btn-sm btn-primary me-3" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target">Create Course</a>
+									</div>
+								}
 								<!--end::Actions-->
 							</div>
 							<!--end::Head-->

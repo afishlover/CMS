@@ -5,7 +5,9 @@
 	var category = (RootCategoryDTO)ViewData["current"];
 	ViewData["Title"] = category.CategoryName ?? "";
 	var categories = (List<RootCategoryDTO>)ViewData["categories"];
+	var allCategories = (List<RootCategoryDTO>)ViewData["allCategories"];
 	var courses = (List<CourseDTO>)ViewData["courses"];
+	var role = ViewData["role"];
 }
 
 <!--begin::Content-->
@@ -41,9 +43,13 @@
 								</div>
 								<!--end::Details-->
 								<!--begin::Actions-->
-								<div class="d-flex mb-4">
-									<a href="#" class="btn btn-sm btn-primary me-3" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target">Create Course</a>
-								</div>
+								@if (role.Equals("Teacher"))
+								{
+
+									<div class="d-flex mb-4">
+										<a href="#" class="btn btn-sm btn-primary me-3" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target">Create Course</a>
+									</div>
+								}
 								<!--end::Actions-->
 							</div>
 							<!--end::Head-->
@@ -158,7 +164,7 @@
 									<select class="form-select form-select-solid" data-control="select2" data-hide-search="true" name="categoryId">
 										<option value="">Select category...</option>
 										<option value=@category.CategoryId>@category.CategoryName</option>
-										@foreach (var cat in categories)
+										@foreach (var cat in allCategories)
 										{
 											<option value=@cat.CategoryId>@cat.CategoryName</option>
 										}

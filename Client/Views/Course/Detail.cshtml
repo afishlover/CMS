@@ -58,7 +58,7 @@
 										<div class="d-flex mb-4">
 											<a href="#" class="btn btn-sm btn-primary me-3" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target">Add Resource</a>
 										</div>
-				//check edit course
+										//check edit course
 										<div class="d-flex mb-4">
 											<a href="#" class="btn btn-sm btn-primary me-3" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target">Edit course</a>
 										</div>
@@ -69,7 +69,6 @@
 									else
 									{
 										var enrolled = ViewData["enrolled"];
-										//check enrolled
 										if (enrolled.Equals("true"))
 										{
 											<form asp-controller="Course" asp-action="Unenroll" method="POST">
