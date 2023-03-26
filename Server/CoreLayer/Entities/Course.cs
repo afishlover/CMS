@@ -11,6 +11,6 @@ namespace CoreLayer.Entities
         public DateTime? Since { get; set; }
         public DateTime? LastUpdate { get; set; }
         public Guid CategoryId { get; set; }
-        public string? CreatorCode { get; set; }
+        public Guid? CreatorCode { get; set; }
     }
 }
