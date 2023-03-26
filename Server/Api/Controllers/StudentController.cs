@@ -2,6 +2,7 @@
 using Api.Models.DTOs;
 using ApplicationLayer;
 using AutoMapper;
+using CoreLayer.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -43,13 +44,14 @@ namespace Api.Controllers
                 }
                 var students = await _unitOfWork._studentRepository.GetAllAsync();
                 var studentCourse = await _unitOfWork._studentCourseRepository.GetByCourseIdAsync(id);
-                var user = await _unitOfWork._userRepository.GetByAccountIdAsync(account.AccountId);
+                var users = await _unitOfWork._userRepository.GetAllAsync();
                 if (!studentCourse.Any())
                 {
                     return NoContent();
                 }
-                var result = studentCourse.Join(students, sc => sc.StudentId, s => s.StudentId, (sc, c) => _mapper.Map<StudentDTO>((sc, c, user)));
-                return Ok(result);
+                var result = studentCourse.Join(students, sc => sc.StudentId, s => s.StudentId, (sc, s) => new { sc, s})
+                    .Join(users, r1 => r1.s.UserId, u => u.UserId, (r1, r2) => _mapper.Map<StudentDTO>((r1.sc, r1.s, r2)));
+                return Ok(JsonConvert.SerializeObject(result, Formatting.Indented));
             }
             catch (Exception e)
             {
