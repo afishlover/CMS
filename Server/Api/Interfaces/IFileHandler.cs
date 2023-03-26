@@ -3,6 +3,6 @@
     public interface IFileHandler
     {
         public Task<string?> Upload(IFormFile file, string path, string fileName);
-        public string Download();
+        public Task Delete(string path);
     }
 }

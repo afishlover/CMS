@@ -197,14 +197,18 @@ namespace Api.Controllers
             }
         }
 
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteResourceById(Guid id)
-        //{
-        //    try
-        //    {
-        //        Request.Headers.TryGetValue("Authorization", out var values);
-        //        var accountId = _jwtHandler.GetAccountIdFromJwt(values);
-        //        var account = await _unitOfWork._accountRepository.GetByIdAsync(new Guid(accountId));
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteResourceById(Guid id)
+        {
+            try
+            {
+                Request.Headers.TryGetValue("Authorization", out var values);
+                var accountId = _jwtHandler.GetAccountIdFromJwt(values);
+                var account = await _unitOfWork._accountRepository.GetByIdAsync(new Guid(accountId));
 
         //        if (account == null)
         //        {
@@ -213,16 +217,30 @@ namespace Api.Controllers
         //        var user = await _unitOfWork._userRepository.GetByAccountIdAsync(account.AccountId);
         //        var teacher = await _unitOfWork._teacherRepository.GetByUserIdAsync(user.UserId);
 
-        //        if (teacher == null)
-        //        {
-        //            return Forbid();
-        //        }
-        //        var resource = await _unitOfWork._resourceRepository.GetByIdAsync(id);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //    }
-        //}
+                if (teacher == null)
+                {
+                    return Forbid();
+                }
+                var resource = await _unitOfWork._resourceRepository.GetByIdAsync(id);
+                if (resource == null)
+                {
+                    return NotFound("No resource with this id found");
+                }
+
+                var course = await _unitOfWork._courseRepository.GetByIdAsync(resource.CourseId);
+                if (resource.FileURL != null)
+                {
+                    var folderPath = $"Resources/{course.CategoryId}/{course.CourseId}";
+                    var savePath = Path.Combine(Directory.GetCurrentDirectory(), folderPath);
+                    await _fileHandler.Delete(savePath);
+                }
+                await _unitOfWork._resourceRepository.DeleteAsync(id);
+                return Ok("Deleted");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }
