@@ -53,14 +53,14 @@ namespace Api.Controllers
             }
         }
 
-        ////for user 
+        //for user 
         //[HttpPost]
         //[Authorize(Roles = "Student, Teacher")]
         //[ProducesResponseType(StatusCodes.Status200OK)]
         //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //public async Task<IActionResult> GetUserInfoByAccountId(Guid id)
         //{
-
+        //    var
         //}
     }
 }

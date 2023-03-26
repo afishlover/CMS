@@ -1,10 +1,13 @@
+using Api.Interfaces;
 using Api.Models.DTOs;
+using Api.Utils;
 using ApplicationLayer;
 using AutoMapper;
 using CoreLayer.Entities;
 using InfrastructureLayer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Api.Controllers
 {
@@ -14,11 +17,13 @@ namespace Api.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IJwtHandler _jwtHandler;
 
-        public CategoryController(IUnitOfWork unitOfWork, IMapper mapper)
+        public CategoryController(IUnitOfWork unitOfWork, IMapper mapper, JwtHandler jwtHandler)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _jwtHandler = jwtHandler;
         }
 
         [HttpGet]
@@ -29,6 +34,15 @@ namespace Api.Controllers
         {
             try
             {
+                Request.Headers.TryGetValue("Authorization", out var values);
+                var accountId = _jwtHandler.GetAccountIdFromJwt(values);
+                var account = await _unitOfWork._accountRepository.GetByIdAsync(new Guid(accountId));
+
+                if (account == null)
+                {
+                    return NotFound("User associated with this account is not found");
+                }
+
                 var result = await _unitOfWork._categoryRepository.GetAllAsync();
                 return Ok(result.Where(r => r.Level == 0).Select(_ => _mapper.Map<RootCategoryDTO>(_)));
             }
@@ -38,7 +52,7 @@ namespace Api.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         //[Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -46,8 +60,17 @@ namespace Api.Controllers
         {
             try
             {
+                Request.Headers.TryGetValue("Authorization", out var values);
+                var accountId = _jwtHandler.GetAccountIdFromJwt(values);
+                var account = await _unitOfWork._accountRepository.GetByIdAsync(new Guid(accountId));
+
+                if (account == null)
+                {
+                    return NotFound("User associated with this account is not found");
+                }
+
                 var result = await _unitOfWork._categoryRepository.GetAllAsync();
-                return Ok(result.Where(r => r.Level > 0 && r.ParentId == id).Select(_ => _mapper.Map<RootCategoryDTO>(_)));
+                return Ok(result.Where(r => r.Level > 0 && r.ParentId != null && r.CategoryId.Equals(id)).Select(_ => _mapper.Map<RootCategoryDTO>(_)));
             }
             catch (Exception ex)
             {
@@ -55,39 +78,53 @@ namespace Api.Controllers
             }
         }
 
-		[HttpGet]
-		//[Authorize]
-		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<IActionResult> GetCategoryById(Guid id)
-		{
-			try
-			{
-				var category = await _unitOfWork._categoryRepository.GetByIdAsync(id);
-                var result = _mapper.Map<RootCategoryDTO>(category);
-				return Ok(result);
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-			}
-		}
+        [HttpGet("{id}")]
+        //[Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetCategoryId(Guid id)
+        {
+            try
+            {
+                Request.Headers.TryGetValue("Authorization", out var values);
+                var accountId = _jwtHandler.GetAccountIdFromJwt(values);
+                var account = await _unitOfWork._accountRepository.GetByIdAsync(new Guid(accountId));
 
-		//[HttpGet]
-		//[ProducesResponseType(StatusCodes.Status200OK)]
-		//[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		//public async Task<IActionResult> GetCategoryHierarchy()
-		//{
-		//    var result = (await _unitOfWork._categoryRepository.GetAllAsync()).SelectMany(_ => _.)
-		//}
+                if (account == null)
+                {
+                    return NotFound("User associated with this account is not found");
+                }
 
-		//async Task<IEnumerable<Category>> GetChild(Guid id)
-		//{
-		//    var table = await _unitOfWork._categoryRepository.GetAllAsync();
-		//    return table.Where(x => x.CategoryId == id || x.ParentId == id)
-		//                .Union(table.Where(x => x.ParentId == id)
-		//                            .SelectMany(y => GetChild(y.CategoryId)));
-		//}
-	}
+                var category = await _unitOfWork._categoryRepository.GetByIdAsync(id);
+
+                if(category == null)
+                {
+                    return NotFound("No category with this id");
+                }
+                return Ok(JsonConvert.SerializeObject(category));
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+
+        //[HttpGet]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //public async Task<IActionResult> GetCategoryHierarchy()
+        //{
+        //    var result = (await _unitOfWork._categoryRepository.GetAllAsync()).SelectMany(_ => _.)
+        //}
+
+        //async Task<IEnumerable<Category>> GetChild(Guid id)
+        //{
+        //    var table = await _unitOfWork._categoryRepository.GetAllAsync();
+        //    return table.Where(x => x.CategoryId == id || x.ParentId == id)
+        //                .Union(table.Where(x => x.ParentId == id).SelectMany(y => GetChild(y.CategoryId)));
+        //}
+    }
 }
 

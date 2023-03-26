@@ -38,7 +38,7 @@ public class TeacherRepository : ITeacherRepository
         throw new NotImplementedException();
     }
 
-    public async Task<Teacher?> GetTeacherByUserIdAsync(Guid id)
+    public async Task<Teacher?> GetByUserIdAsync(Guid id)
     {
         return await _queryFactory.Query(Table.TEACHER_TABLE).Where(Table.TEACHER_TABLE_USERID, "=", id).FirstOrDefaultAsync<Teacher>();
     }

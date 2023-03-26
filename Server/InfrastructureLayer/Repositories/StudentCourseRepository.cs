@@ -40,4 +40,10 @@ public class StudentCourseRepository : IStudentCourseRepository
     {
         return await _queryFactory.Query(Table.STUDENTCOURSES_TABLE).Where(Table.STUDENTCOURSES_TABLE_COURSEID, "=", id).DeleteAsync();
     }
+
+    public async Task<IEnumerable<StudentCourse>> GetByCourseIdAsync(Guid courseId)
+    {
+        return await _queryFactory.Query(Table.STUDENTCOURSES_TABLE).Where(Table.STUDENTCOURSES_TABLE_COURSEID, "=", courseId).GetAsync<StudentCourse>();
+
+    }
 }
