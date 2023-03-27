@@ -7,8 +7,8 @@ namespace CoreLayer.Entities
         public Guid ResourceId { get; set; }
         public ResourceType ResourceType { get; set; }
         public Guid CourseId { get; set; }
-        public string FileURL { get; set; }
-        public string Content { get; set; }
+        public string? FileURL { get; set; }
+        public string? Content { get; set; }
         public DateTime? OpenTime { get; set; }
         public DateTime? CloseTime { get; set; }
         public Status Status { get; set; }
