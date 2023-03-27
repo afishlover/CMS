@@ -145,27 +145,9 @@ namespace Client.Controllers
 			return View("MyProfile");
 		}
 
-		[HttpGet]
-		[Route("/changepassword")]
-		public IActionResult ChangePassword()
-		{
-			HttpContext.Request.Headers.TryGetValue("Authorization", out var token);
-			if (string.IsNullOrEmpty(token))
-			{
-				return RedirectToAction("Login", "Account");
-			}
-			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.ToString());
-
-			var role = HttpContext.Session.GetString("Role");
-			ViewData["role"] = role;
-
-
-			return View();
-		}
-
 		[HttpPost]
 		[Route("/changepassword")]
-		public async Task<IActionResult> ChangePassword(ChangePasswordDTO changePasswordDTO)
+		public async Task<IActionResult> ChangePassword(string oldPassword, string newPassword, string newPasswordConfirmation)
 		{
 			HttpContext.Request.Headers.TryGetValue("Authorization", out var token);
 			if (string.IsNullOrEmpty(token))
@@ -177,19 +159,20 @@ namespace Client.Controllers
 			var role = HttpContext.Session.GetString("Role");
 			ViewData["role"] = role;
 
-			if (ModelState.IsValid)
+			var changePasswordDTO = new ChangePasswordDTO
 			{
-				string strData = JsonConvert.SerializeObject(changePasswordDTO);
-				HttpContent content = new StringContent(strData, Encoding.UTF8, "application/json");
-				HttpResponseMessage response = await _client.PostAsync(CmsApiUrl + "/account/changepassword", content);
-				if (response.IsSuccessStatusCode)
-				{
-					return RedirectToAction("Logout", "Account");
-				}
-
-				ModelState.AddModelError(string.Empty, "Invalid information");
+				OldPassword = oldPassword,
+				NewPassword = newPassword,
+				NewPasswordConfirmation = newPasswordConfirmation
+			};
+			string strData = JsonConvert.SerializeObject(changePasswordDTO);
+			HttpContent content = new StringContent(strData, Encoding.UTF8, "application/json");
+			HttpResponseMessage response = await _client.PostAsync(CmsApiUrl + "/account/changepassword", content);
+			if (response.IsSuccessStatusCode)
+			{
+				return RedirectToAction("Logout", "Account");
 			}
-			return View(changePasswordDTO);
+			return View();
 		}
 	}
 }
