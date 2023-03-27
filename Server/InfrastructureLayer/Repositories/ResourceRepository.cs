@@ -17,9 +17,9 @@ namespace InfrastructureLayer.Repositories
             _queryFactory = queryFactory;
         }
 
-        public Task<int> AddAsync(Resource entity)
+        public async Task<int> AddAsync(Resource entity)
         {
-            throw new NotImplementedException();
+            return await _queryFactory.Query(Table.RESOURCES_TABLE).InsertAsync(entity);
         }
 
         public async Task<int> DeleteAsync(Guid id)
