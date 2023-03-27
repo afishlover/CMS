@@ -101,7 +101,7 @@ namespace Client.Controllers
 
 		[HttpGet]
 		[Route("/me")]
-		public IActionResult MyProfile()
+		public async Task<IActionResult> MyProfile()
 		{
 			HttpContext.Request.Headers.TryGetValue("Authorization", out var token);
 			if (string.IsNullOrEmpty(token))
@@ -113,6 +113,16 @@ namespace Client.Controllers
 			var role = HttpContext.Session.GetString("Role");
 			ViewData["role"] = role;
 
+			HttpResponseMessage response = await _client.GetAsync(CmsApiUrl + "/user/GetDetailedUserProfile");
+			if (response.IsSuccessStatusCode)
+			{
+				var result = await response.Content.ReadAsStringAsync();
+				DetailedUserDTO user = JsonConvert.DeserializeObject<DetailedUserDTO>(result);
+				if (user != null)
+				{
+					ViewData["profile"] = user;
+				}
+			}
 
 			return View();
 		}

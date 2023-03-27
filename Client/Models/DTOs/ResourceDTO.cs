@@ -2,6 +2,7 @@
 {
     public class ResourceDTO
     {
+        public Guid ResourceId { get; set; }
         public string ResourceType { get; set; }
         public Guid CourseId { get; set; }
         public string FileURL { get; set; }

@@ -5,7 +5,8 @@ namespace Api.Models.DTOs
 {
     public class ResourceDTO
     {
-        public string ResourceType { get; set; }
+		public Guid ResourceId { get; set; }
+		public string ResourceType { get; set; }
         public Guid CourseId { get; set; }
         public string FileURL { get; set; }
         public string Content { get; set; }

@@ -91,7 +91,7 @@ namespace Api.Controllers
                     return NoContent();
                 }
 
-                return Ok(JsonConvert.SerializeObject(resources.Select(_ => _mapper.Map<ResourceDTO>(_)), Formatting.Indented));
+                return Ok(resources.Select(_ => _mapper.Map<ResourceDTO>(_)));
             }
             catch (Exception ex)
             {
@@ -181,17 +181,6 @@ namespace Api.Controllers
                 resource.LastUpdate = DateTime.Now;
                 resource.Status = 0;
                 resource.ResourceType = CoreLayer.Enums.ResourceType.Upload;
-
-                //if (resource.ResourceType != 0)
-                //{
-                //    var formCollection = await Request.ReadFormAsync();
-                //    var file = formCollection.Files[0];
-                //    var folderPath = $"Resources/{course.CategoryId}/{course.CourseId}";
-                //    var savePath = Path.Combine(Directory.GetCurrentDirectory(), folderPath);
-                //    var fileName = $"{resource.ResourceId}";
-                //    await _fileHandler.Upload(file, savePath, fileName);
-                //    resource.FileURL = Path.Combine(savePath, fileName);
-                //}
                 await _unitOfWork._resourceRepository.AddAsync(resource);
                 return Ok("Resource created");
             }

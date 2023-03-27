@@ -184,6 +184,7 @@ namespace Client.Controllers
 			var role = HttpContext.Session.GetString("Role");
 			ViewData["role"] = role;
 
+			ViewData["rootApi"] = CmsApiUrl;
 
 			//Get current course details
 			CourseDTO current;
@@ -217,24 +218,25 @@ namespace Client.Controllers
 
 
 			//Get resources
-			//response = await _client.GetAsync(CmsApiUrl + "/course/GetCourseByCategoryId/" + id);
-			//if (response.IsSuccessStatusCode)
-			//{
-			//	// Get the categories list from response
-			//	var result = await response.Content.ReadAsStringAsync();
-			//	List<CourseDTO> courses = JsonConvert.DeserializeObject<List<CourseDTO>>(result);
-			//	if (courses == null)
-			//	{
-			//		courses = new List<CourseDTO>();
-			//	}
-			//	ViewData["courses"] = courses;
-			//}
+			HttpContent content = new StringContent(id, Encoding.UTF8, "application/json");
+			response = await _client.GetAsync(CmsApiUrl + "/Resource/GetResourcesByCourseId/" + id);
+			if (response.IsSuccessStatusCode)
+			{
+				// Get the categories list from response
+				var result = await response.Content.ReadAsStringAsync();
+				List<ResourceDTO> resources = JsonConvert.DeserializeObject<List<ResourceDTO>>(result);
+				if (resources == null)
+				{
+					resources = new List<ResourceDTO>();
+				}
+				ViewData["resources"] = resources;
+			}
 
 			//check enrolled
 			if (role.Equals("Student"))
 			{
 				ViewData["enrolled"] = "false";
-				HttpContent content = new StringContent(id, Encoding.UTF8, "application/json");
+				content = new StringContent(id, Encoding.UTF8, "application/json");
 				response = await _client.PostAsync(CmsApiUrl + "/course/CheckStudentEnrollCourse/" + id, content);
 				if (response.IsSuccessStatusCode)
 				{

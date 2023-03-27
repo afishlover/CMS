@@ -21,7 +21,7 @@ namespace Client.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Create(string courseId, string fileURL)
+		public async Task<IActionResult> Create(string courseId, string fileURL, string content)
 		{
 			HttpContext.Request.Headers.TryGetValue("Authorization", out var token);
 			if (string.IsNullOrEmpty(token))
@@ -34,6 +34,7 @@ namespace Client.Controllers
 			ViewData["role"] = role;
 
 			string CourseId = courseId;
+			string Content = content;
 			DateTime OpenTime = DateTime.Now;
 			DateTime CloseTime = DateTime.Now;
 			string FileURL = fileURL;
@@ -42,18 +43,18 @@ namespace Client.Controllers
 			CreateResourceDTO resource = new CreateResourceDTO
 			{
 				CourseId = Guid.Parse(CourseId),
-				Content = "",
+				Content = string.IsNullOrEmpty(Content) ? "Re" + DateTime.Now.ToString() : Content,
 				OpenTime = OpenTime.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
 				CloseTime = CloseTime.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
 				FileURL = FileURL
 			};
 			string strData = JsonConvert.SerializeObject(resource);
-			HttpContent content = new StringContent(strData, Encoding.UTF8, "application/json");
-			HttpResponseMessage response = await _client.PostAsync(CmsApiUrl + "/resource/CreateResource", content);
+			HttpContent contentData = new StringContent(strData, Encoding.UTF8, "application/json");
+			HttpResponseMessage response = await _client.PostAsync(CmsApiUrl + "/resource/CreateResource", contentData);
 			if (response.IsSuccessStatusCode)
 			{
-				return RedirectToAction("Detail", "Course", new { id = "84e4cb70-c6e2-4703-821a-5fabe4203de6" });
-				}
+				return RedirectToAction("Detail", "Course", new { id = CourseId });
+			}
 
 
 			return View();
