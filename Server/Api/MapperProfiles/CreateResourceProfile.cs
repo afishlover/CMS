@@ -9,7 +9,9 @@ namespace Api.MapperProfiles
         public CreateResourceProfile()
         {
 
-            CreateMap<Resource, CreateResourceDTO>();
-        }
+            CreateMap<CreateResourceDTO, Resource>()
+                .ForMember(c => c.OpenTime, m => m.MapFrom(cc => DateTime.Parse(cc.OpenTime)))
+                .ForMember(c => c.CloseTime, m => m.MapFrom(cc => DateTime.Parse(cc.CloseTime))); ;
+		}
     }
 }

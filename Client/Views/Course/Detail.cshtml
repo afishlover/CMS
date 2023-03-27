@@ -266,7 +266,7 @@
 						<!--begin::Modal body-->
 						<div class="modal-body scroll-y px-10 px-lg-15 pt-0 pb-15">
 							<!--begin:Form-->
-							<form id="kt_modal_new_target_form" enctype="multipart/form-data" class="form" asp-controller="Resource" asp-action="Create" method="POST">
+							<form id="kt_modal_create_resource_form" enctype="multipart/form-data" class="form" asp-controller="Resource" asp-action="Create" method="POST">
 								<!--begin::Heading-->
 								<div class="mb-13 text-center">
 									<!--begin::Title-->
@@ -282,7 +282,7 @@
 										<i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Specify a target name for future usage and reference"></i>
 									</label>
 									<!--end::Label-->
-									<input type="file" class="form-control form-control-solid" id="file" name="file" />
+									<input type="file" class="form-control form-control-solid" id="upload" name="upload" />
 								</div>
 								<!--end::Input group-->
 								<!--begin::Input group-->
@@ -308,8 +308,7 @@
 								</div>
 								<!--end::Input group-->
 								<input type="hidden" class="form-control form-control-solid" name="courseId" value=@course.CourseId />
-								<input type="hidden" class="form-control form-control-solid" name="resourceType" value="1" />
-								<input type="hidden" class="form-control form-control-solid" name="status" value="0" />
+								<input type="hidden" class="form-control form-control-solid" name="fileURL" />
 								<!--begin::Actions-->
 								<div class="text-center">
 									<button type="submit" id="kt_modal_new_target_submit" class="btn btn-primary">
@@ -332,27 +331,28 @@
 			</div>
 
 			<script>
-				//const uploadFunction = event => {
-				//	const files = event.target.files
-				//	const data = new FormData()
-				//	data.append('file', files[0])
+				const uploadFunction = event => {
+					const files = event.target.files
+					const data = new FormData(document.getElementById('kt_modal_create_resource_form'))
+					data.append('file', files[0])
 
-				//	fetch('http://localhost:5132/Upload', {
-				//		method: 'POST',
-				//		body: data
-				//	})
-				//		.then(response => response.json())
-				//		.then(data => {
-				//			console.log(data)
-				//		})
-				//		.catch(error => {
-				//			console.error(error)
-				//		})
-				//}
+					fetch('https://localhost:7272/Upload/Upload', {
+						method: 'POST',
+						body: data
+					})
+						.then(response => response.json())
+						.then(data => {
+							document.getElementsByName("fileURL")[0].value = data.dbPath;
+							console.log(data)
+						})
+						.catch(error => {
+							console.error(error)
+						})
+				}
 
-				//document.querySelector('#upload').addEventListener('change', event => {
-				//	uploadFunction(event)
-				//})
+				document.querySelector('#upload').addEventListener('change', event => {
+					uploadFunction(event)
+				})
 
 			</script>
 			<!--end::Modal - Create Resource-->

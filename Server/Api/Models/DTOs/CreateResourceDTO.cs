@@ -6,8 +6,8 @@ namespace Api.Models.DTOs
     {
         public Guid CourseId { get; set; }
         public string Content { get; set; }
-        public DateTime? OpenTime { get; set; }
-        public DateTime? CloseTime { get; set; }
+        public string OpenTime { get; set; }
+        public string CloseTime { get; set; }
 
 		public string FileURL { get; set; }
 	}

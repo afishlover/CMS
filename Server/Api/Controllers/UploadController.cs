@@ -1,14 +1,16 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 
 namespace Api.Controllers
 {
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
+    [AllowAnonymous]
     [ApiController]
     public class UploadController : ControllerBase
     {
-        [HttpPost("[action]")]
+        [HttpPost, DisableRequestSizeLimit]
         public async Task<IActionResult> Upload()
         {
             try
@@ -25,7 +27,7 @@ namespace Api.Controllers
                     var dbPath = Path.Combine(folderName, fileName);
                     using (var stream = new FileStream(fullPath, FileMode.Create))
                     {
-                        file.CopyTo(stream);
+                        await file.CopyToAsync(stream);
                     }
                     return Ok(new { dbPath });
                 }

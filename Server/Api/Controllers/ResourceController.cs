@@ -141,7 +141,7 @@ namespace Api.Controllers
             }
         }
 
-        [HttpPost, Consumes("multipart/form-data")]
+        [HttpPost]
         //[Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
