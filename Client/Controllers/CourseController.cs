@@ -133,9 +133,6 @@ namespace Client.Controllers
 		{
 			string CourseName = form["courseName"];
 			string CourseCode = form["courseCode"];
-			DateTime StartDate = DateTime.Parse(form["startDate"]);
-			DateTime EndDate = DateTime.Parse(form["endDate"]);
-			string CategoryName = form["categoryName"];
 			Guid CourseId = Guid.Parse(form["courseId"]);
 			//validate
 
@@ -144,9 +141,6 @@ namespace Client.Controllers
 				CourseId = CourseId,
 				CourseName = CourseName,
 				CourseCode = CourseCode,
-				StartDate = StartDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-				EndDate = EndDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-				CategoryName = CategoryName
 			};
 
 			HttpContext.Request.Headers.TryGetValue("Authorization", out var token);
@@ -164,7 +158,7 @@ namespace Client.Controllers
 			HttpResponseMessage response = await _client.PutAsync(CmsApiUrl + "/course/UpdateCourse", content);
 			if (response.IsSuccessStatusCode)
 			{
-				return RedirectToAction("Detail", "Course", CourseId);
+				return RedirectToAction("Detail", "Course", new {id = CourseId});
 			}
 
 			return RedirectToAction("Index", "Home");

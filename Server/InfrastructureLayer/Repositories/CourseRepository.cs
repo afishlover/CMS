@@ -32,13 +32,8 @@ public class CourseRepository : ICourseRepository
     {
         return await _queryFactory.Query(Table.COURSES_TABLE).Where(Table.COURSES_TABLE_COURSEID, "=", entity.CourseId).UpdateAsync(new
         {
-            entity.CreatorCode,
-            entity.StartDate,
-            entity.EndDate,
-            entity.Since,
-            entity.CategoryId,
-            entity.CourseCode,
-            entity.LastUpdate
+            entity.CourseName,
+            entity.CourseCode
         });
     }
 

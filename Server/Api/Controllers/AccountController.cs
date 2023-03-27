@@ -38,16 +38,16 @@ namespace Api.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpGet("{email}")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO resetPasswordDTO)
+        public async Task<IActionResult> ResetPassword(string email)
         {
             try
             {
-                var account = await _unitOfWork._accountRepository.GetAccountByEmailAsync(resetPasswordDTO.Email);
+                var account = await _unitOfWork._accountRepository.GetAccountByEmailAsync(email);
 
                 if (account == null)
                 {

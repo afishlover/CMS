@@ -176,25 +176,10 @@ namespace Client.Controllers
 		}
 
 		[HttpPost]
+		[AllowAnonymous]
 		public async Task<IActionResult> ResetPassword(string email)
 		{
-			HttpContext.Request.Headers.TryGetValue("Authorization", out var token);
-			if (string.IsNullOrEmpty(token))
-			{
-				return RedirectToAction("Login", "Account");
-			}
-			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.ToString());
-
-			var role = HttpContext.Session.GetString("Role");
-			ViewData["role"] = role;
-
-			var resetPasswordDTO = new ResetPasswordDTO
-			{
-				Email = email
-			};
-			string strData = JsonConvert.SerializeObject(resetPasswordDTO);
-			HttpContent content = new StringContent(strData, Encoding.UTF8, "application/json");
-			HttpResponseMessage response = await _client.PostAsync(CmsApiUrl + "/account/resetpassword", content);
+			HttpResponseMessage response = await _client.GetAsync(CmsApiUrl + "/account/resetpassword/" + email);
 			return RedirectToAction("Logout", "Account");
 		}
 	}

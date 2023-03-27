@@ -196,30 +196,10 @@
 									<input type="text" class="form-control form-control-solid" placeholder="Enter Course Code" name="courseCode" value=@course.CourseCode />
 								</div>
 								<!--end::Input group-->
-								<!--begin::Input group-->
-								<div class="d-flex flex-column mb-8 fv-row">
-									<!--begin::Label-->
-									<label class="d-flex align-items-center fs-6 fw-bold mb-2">
-										<span class="required">Start Date</span>
-										<i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Specify a target name for future usage and reference"></i>
-									</label>
-									<!--end::Label-->
-									<input type="date" class="form-control form-control-solid" name="startDate" value="2023-03-01" />
-								</div>
-								<!--end::Input group-->
-								<!--begin::Input group-->
-								<div class="d-flex flex-column mb-8 fv-row">
-									<!--begin::Label-->
-									<label class="d-flex align-items-center fs-6 fw-bold mb-2">
-										<span class="required">End Date</span>
-										<i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Specify a target name for future usage and reference"></i>
-									</label>
-									<!--end::Label-->
-									<input type="date" class="form-control form-control-solid" name="endDate" value="2023-03-31" />
-								</div>
-								<!--end::Input group-->
 								<input type="hidden" class="form-control form-control-solid" name="courseId" value=@course.CourseId />
 								<input type="hidden" class="form-control form-control-solid" name="categoryName" value=@course.CategoryName />
+								<input type="hidden" class="form-control form-control-solid" name="teacherName" value=@course.TeacherName />
+								<input type="hidden" class="form-control form-control-solid" name="since" value=@course.Since />
 								<!--begin::Actions-->
 								<div class="text-center">
 									<button class="btn btn-light me-3" data-bs-dismiss="modal">Cancel</button>
