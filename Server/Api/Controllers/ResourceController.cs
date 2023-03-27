@@ -141,7 +141,7 @@ namespace Api.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost, Consumes("multipart/form-data")]
         //[Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -177,17 +177,21 @@ namespace Api.Controllers
 
                 resource.ResourceId = Guid.NewGuid();
                 resource.CreatorId = teacher.TeacherId;
+                resource.Since = DateTime.Now;
+                resource.LastUpdate = DateTime.Now;
+                resource.Status = 0;
+                resource.ResourceType = CoreLayer.Enums.ResourceType.Upload;
 
-                if (resource.ResourceType != 0)
-                {
-                    var formCollection = await Request.ReadFormAsync();
-                    var file = formCollection.Files[0];
-                    var folderPath = $"Resources/{course.CategoryId}/{course.CourseId}";
-                    var savePath = Path.Combine(Directory.GetCurrentDirectory(), folderPath);
-                    var fileName = $"{resource.ResourceId}";
-                    await _fileHandler.Upload(file, savePath, fileName);
-                    resource.FileURL = Path.Combine(savePath, fileName);
-                }
+                //if (resource.ResourceType != 0)
+                //{
+                //    var formCollection = await Request.ReadFormAsync();
+                //    var file = formCollection.Files[0];
+                //    var folderPath = $"Resources/{course.CategoryId}/{course.CourseId}";
+                //    var savePath = Path.Combine(Directory.GetCurrentDirectory(), folderPath);
+                //    var fileName = $"{resource.ResourceId}";
+                //    await _fileHandler.Upload(file, savePath, fileName);
+                //    resource.FileURL = Path.Combine(savePath, fileName);
+                //}
                 await _unitOfWork._resourceRepository.AddAsync(resource);
                 return Ok("Resource created");
             }
